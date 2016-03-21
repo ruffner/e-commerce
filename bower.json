@@ -1,0 +1,19 @@
+{
+  "name": "e-commerce",
+  "homepage": "https://github.com/ruffner/e-commerce",
+  "authors": [
+    "Matt Ruffner <mattruffner7@gmail.com>"
+  ],
+  "description": "Database design project for CS405G at the University of Kentucky",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
