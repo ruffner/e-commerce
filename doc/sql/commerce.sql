@@ -2,6 +2,8 @@ CREATE DATABASE Commerce;
 
 USE Commerce;
 
+
+
 CREATE TABLE Customer (
        cid	INTEGER NOT NULL AUTO_INCREMENT,
        uname	VARCHAR(50) NOT NULL,
