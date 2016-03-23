@@ -27,14 +27,15 @@ CREATE TABLE Manager (
 ) ENGINE=INNODB;
 
 CREATE TABLE Item (
-       pid	INTEGER NOT NULL AUTO_INCREMENT,
-       pname VARCHAR(500) NOT NULL,
-       type VARCHAR(100) NOT NULL,
-       cost REAL NOT NULL,
-       discount REAL NOT NULL,
-       der_price REAL NOT NULL,
-       quantity INTEGER NOT NULL,
-       PRIMARY KEY(pid)
+        pid	INTEGER NOT NULL AUTO_INCREMENT,
+        pname VARCHAR(500) NOT NULL,
+        type VARCHAR(100) NOT NULL,
+        cost REAL NOT NULL,
+        discount REAL NOT NULL,
+        der_price REAL NOT NULL,
+        quantity INTEGER NOT NULL,
+	image VARCHAR(100) NOT NULL,       
+	PRIMARY KEY(pid)
 ) ENGINE=INNODB;
 
 CREATE TABLE Orders (
