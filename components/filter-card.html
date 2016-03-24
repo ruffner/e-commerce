@@ -1,0 +1,46 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-menu/paper-submenu.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="filter-card">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+    </style>
+    <style is="custom-style">
+      paper-menu.sublist {
+      padding-left: 30px;
+      }
+    </style>
+    
+     <paper-menu>
+       <paper-submenu>
+	 <paper-icon-item class="menu-trigger">
+	   <iron-icon icon="filter-list" item-icon></iron-icon>
+	   Filter
+	 </paper-icon-item>
+	 <paper-menu class="menu-content sublist" multi>
+	   <paper-item>Toys</paper-item>
+	   <paper-item>Games</paper-item>
+	   <paper-item>Fun Stuff</paper-item>
+	   <paper-item>The Good Stuff</paper-item>
+	 </paper-menu>
+       </paper-submenu>
+     </paper-menu>
+
+
+  </template>
+
+  <script>
+    Polymer({
+    is: "filter-card",
+    properties: {
+    }
+    });
+  </script>
+
+
+</dom-module>

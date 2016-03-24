@@ -7,38 +7,19 @@
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="register-card.html">
+<link rel="import" href="filter-card.html">
+<link rel="import" href="search-card.html">
 <link rel="import" href="item-card.html">
 
 <dom-module id="app-shell">
   <template>
     <style include="iron-flex iron-flex-alignment">
-    <style>
       :host {
         font-family: Roboto;
       }
     </style>
     <style is="custom-style">
-      #search {
-      --paper-input-container-underline: {
-      background-color: #999;
-      }
-      --paper-input-container-underline-focus: {
-      background-color: #bbb;
-      }
-      --paper-input-container-input: {
-      color: #eee;
-      } 
-      --paper-input-container-label: {
-      color: #999;
-      }
-      --paper-input-container-label-floating: {
-      color: #999;
-      }
-      --paper-input-container-label-focus: {
-      color: #aaa;
-      }
-      margin-bottom: 15px;
-      }
+      
     </style>
     
     <paper-drawer-panel>
@@ -47,8 +28,9 @@
 	<paper-toolbar>
 	  <div class="title">Menu</div>
 	</paper-toolbar>
-	<div> 
-	  Drawer content... 
+	<div class="layout vertical center-justified">
+	  <search-card></search-card>
+	  <filter-card></filter-card>
 	</div>
       </paper-header-panel>
 
@@ -56,14 +38,21 @@
 	<paper-toolbar>
 	  <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
 	  <div class="title">Three Dope Boys</div>
-	  <div class="flex"></div>
-	  <paper-input label="Search" id="search">
-	    <paper-icon-button suffix icon="search"></paper-icon-button>
-	  </paper-input>
+
+	  <!-- action buttons here -->
+
 	</paper-toolbar>
-	<div class="layout horizontal wrap">
+	<div class="layout horizontal center-justified wrap">
 	  <register-card visible></register-card>
  	  <item-card></item-card>
+	  <item-card></item-card>
+	  <item-card></item-card>
+	  <item-card></item-card>
+	  <item-card></item-card>
+	  <item-card></item-card>
+	  <item-card></item-card>
+	  <item-card></item-card>
+	  <item-card></item-card>
 	  <item-card></item-card>
 	  <item-card></item-card>
 	  <item-card></item-card>

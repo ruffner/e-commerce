@@ -1,0 +1,28 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="search-card">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+    </style>
+    <style is="custom-style">
+      #search {
+      margin-left: 20px;
+      }
+    </style>
+    
+    <paper-input label="Search" id="search">
+      <paper-icon-button suffix icon="search"></paper-icon-button>
+    </paper-input>
+
+  </template>
+
+  <script>
+    Polymer({
+    is: "search-card"
+    });
+
+  </script>
+</dom-module>
