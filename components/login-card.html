@@ -6,7 +6,7 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<dom-module id="register-card">
+<dom-module id="login-card">
   <template>
     <style include="iron-flex iron-flex-alignment">
 
@@ -15,17 +15,21 @@
 
     </style>
 
+    <paper-icon-item on-tap="authAction">
+      <iron-icon icon="account-circle" item-icon></iron-icon>
+      {{loginStatus}}
+    </paper-icon-item>
+
     <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
-      <h2>Register</h2>
+      <h2>Login</h2>
       <div>
-	<form is="iron-form" id="regForm" method="post" action="">
-	  <paper-input label="Email"></paper-input>
+	<form is="iron-form" id="loginForm" method="post" action="">
 	  <paper-input label="Username"></paper-input>
 	  <paper-input label="Password" type="password"></paper-input>
 	  <div class="buttons">
 	    <paper-button raised on-tap="close">Cancel</paper-button>
 	    <div class="flex"></div>
-	    <paper-button raised on-tap="register">Register</paper-button>
+	    <paper-button raised on-tap="login">Login</paper-button>
 	  </div>
 	</form>
       </div>
@@ -36,16 +40,24 @@
 
   <script>
     Polymer({ 
-    is: "register-card",
+    is: "login-card",
     properties: {
     visible: {
     type: Boolean,
     default: false,
     notifies: true
-    }
+    },
+    loginStatus: String,
+    },
+    ready: function() {
+    this.loginStatus = "Login";
     },
     close: function() {
     this.visible = false;
+    },
+    authAction: function() {
+    if(this.loginStatus == "Login")
+    this.visible = true;
     }
     });
   </script>
