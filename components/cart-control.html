@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="cart-control">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+    </style>
+    <style is="custom-style">
+      #search {
+      margin-left: 20px;
+      margin-right: 20px;
+      }
+    </style>
+    
+    <paper-icon-button on-tap="showCart" icon="shopping-cart"></paper-icon-button>
+
+    <paper-dialog modal id="dialog" opened="{{showing}}" class="layout vertical">
+      <h2>Shopping Cart</h2>
+      
+
+      <div class="buttons">
+        <paper-button raised on-tap="close">Close</paper-button>
+      </div>
+    </paper-dialog>
+    
+
+  </template>
+
+  <script>
+    Polymer({
+    is: "cart-control",
+    properties: {
+    showing: {
+    type: Boolean,
+    default: false,
+    notify: true
+    }
+    },
+    showCart: function() {
+    this.showing = true;
+    },
+    close: function() {
+    this.showing = false;
+    }
+    });
+
+  </script>
+</dom-module>
