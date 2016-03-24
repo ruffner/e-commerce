@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="register-card">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+    <style>
+
+    </style>
+    <style is="custom-style">
+
+    </style>
+
+    <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
+      <h2>Register for our dope store</h2>
+      <div>
+	<form is="iron-form" id="regform" method="post" action="">
+	  <paper-input label="Email"></paper-input>
+	  <paper-input label="Username"></paper-input>
+	  <paper-input label="Password" type="password"></paper-input>
+	  <div class="buttons">
+	    <paper-button raised on-tap="close">Cancel</paper-button>
+	    <paper-button raised on-tap="register">Register</paper-button>
+	  </div>
+	</form>
+      </div>
+    </paper-dialog>
+
+
+  </template>
+
+  <script>
+    Polymer({ 
+    is: "register-card",
+    properties: {
+    visible: {
+    type: Boolean,
+    default: false,
+    notifies: true
+    }
+    },
+    close: function() {
+    this.visible = false;
+    }
+    });
+  </script>
+
+</dom-module>

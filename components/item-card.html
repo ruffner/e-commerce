@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="item-card">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      font-family: Roboto;
+      }
+    </style>
+
+    <style is="custom-style">
+      .square {
+      margin: 15px;
+      width: 234px;
+      height: 234px;
+      }
+      .title {
+      height: 40px;
+      background: #ddd;
+      }
+      .bbar {
+      margin: 10px;
+      }
+    </style>
+
+    <paper-material z="1" class="square layout vertical">
+      <div class="title layout horizontal center-center">Item Title</div>
+      <iron-image src="" class="flex"></iron-image>
+      <div class="bbar layout horizontal center">
+	<div>$3.14</div>
+	<div class="flex"></div>
+	<paper-button raised on-tap="addToCart">BUY</paper-button>
+      </div>
+    </paper-material>
+
+
+  </template>
+
+  <script>
+    Polymer({
+    is: "item-card",
+    properties: {
+
+    }
+    });
+  </script>
+
+</dom-module>
