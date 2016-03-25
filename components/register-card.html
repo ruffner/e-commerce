@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/font-roboto/roboto.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
@@ -11,17 +10,14 @@
     <style include="iron-flex iron-flex-alignment">
 
     </style>
-    <style is="custom-style">
-
-    </style>
 
     <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
       <h2>Register</h2>
-      <div>
-	<form is="iron-form" id="regForm" method="post" action="">
-	  <paper-input label="Email"></paper-input>
-	  <paper-input label="Username"></paper-input>
-	  <paper-input label="Password" type="password"></paper-input>
+      <div id="content">
+	<form is="iron-form" id="regForm" method="post" action="../src/register.php">
+	  <paper-input name="email" label="Email"></paper-input>
+	  <paper-input name="uname" label="Username"></paper-input>
+	  <paper-input name="pass" label="Password" type="password"></paper-input>
 	  <div class="buttons">
 	    <paper-button raised on-tap="close">Cancel</paper-button>
 	    <div class="flex"></div>
@@ -36,17 +32,35 @@
 
   <script>
     Polymer({ 
-    is: "register-card",
-    properties: {
-    visible: {
-    type: Boolean,
-    default: false,
-    notifies: true
-    }
-    },
-    close: function() {
-    this.visible = false;
-    }
+		is: "register-card",
+		properties: {
+			visible: {
+			type: Boolean,
+			default: false,
+			notifies: true
+			}
+		},
+		listeners: {
+			'regForm.iron-form-response': 'handleResponse'
+		},
+		register: function() {
+			 this.$.regForm.submit();
+		},
+		handleResponse(e) {
+			if( e.detail.response && e.detail.response.result ) {
+				if( e.detail.response.result == "success" ) {
+					this.$.content.innerHTML = "Successfully registered, you may now login.";
+					this.async(this.close, 2000);
+				} else {
+					this.$.content.innerHTML = e.detail.response.result;
+				}
+			} else {
+				this.this.$.content.innerHTML = "Error while contacting registration page.";
+			}
+		},
+		close: function() {
+			this.visible = false;
+		}
     });
   </script>
 
