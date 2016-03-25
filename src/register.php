@@ -3,9 +3,10 @@
 header('Content-Type: application/json');
 
 require 'connect.php';
+require 'defs.php';
 
 if( !(isset($_POST['email']) && isset($_POST['uname']) && isset($_POST['pass'])) ) {
-	echo json_encode( Array("result" => "wrong params") );
+	echo json_encode( Array("result" => WRONG_PARAMS) );
 	exit;
 }
 
@@ -21,14 +22,15 @@ if( count($cur) == 0 ) {
 	
 	$_SESSION['db']->query($sql);
 	if( $_SESSION['db']->error() == "" ) {
-		echo json_encode( Array("result" => "success") );
+		echo json_encode( Array("result" => REGISTER_SUCCESS) );
 		// no error
 	} else {
-		echo json_encode( Array("result" => "Unable to create user record.") );
+		echo json_encode( Array("result" => REGISTER_FAILED) );
 		// error
 	}
 } else {
-	echo json_encode( Array("result" => "A user with that email address is already registered.") );
+	echo json_encode( Array("result" => REGISTER_REPEAT) );
 }
 
+exit;
 ?>

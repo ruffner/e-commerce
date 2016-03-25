@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/font-roboto/roboto.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
@@ -9,23 +10,28 @@
 <dom-module id="login-card">
   <template>
     <style include="iron-flex iron-flex-alignment">
-
+      .alert {
+      color: red;
+      }
     </style>
     <style is="custom-style">
-
     </style>
 
     <paper-icon-item on-tap="authAction">
       <iron-icon icon="account-circle" item-icon></iron-icon>
-      {{loginStatus}}
+      <paper-item-body two-line>
+	<div>{{loginLabel}}</div>
+	<div secondary>{{loginLevel}}</div>
+      </paper-item-body>
     </paper-icon-item>
 
     <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
       <h2>Login</h2>
       <div>
-	<form is="iron-form" id="loginForm" method="post" action="">
-	  <paper-input label="Username"></paper-input>
-	  <paper-input label="Password" type="password"></paper-input>
+	<div class="alert" id="message">{{message}}</div>
+	<form is="iron-form" id="loginForm" method="post" action="../src/login.php">
+	  <paper-input name="uname" label="Username"></paper-input>
+	  <paper-input name="pass" label="Password" type="password"></paper-input>
 	  <div class="buttons">
 	    <paper-button raised on-tap="close">Cancel</paper-button>
 	    <div class="flex"></div>
@@ -47,17 +53,46 @@
     default: false,
     notifies: true
     },
-    loginStatus: String,
+    loginLabel: String,
+    loginLevel: String,
+    message: String
+    },
+    listeners: {
+    'loginForm.iron-form-response': 'handleResponse'
     },
     ready: function() {
-    this.loginStatus = "Login";
+    this.loginLabel = "Login";
+    this.loginLevel = "";
+    },
+    login: function() {
+    this.$.loginForm.submit();
     },
     close: function() {
     this.visible = false;
     },
+    handleResponse: function(e) {
+    if( e.detail.response && e.detail.response.result ) {
+    if( e.detail.response.result == "success") {
+    this.message = "Login successful!";
+    this.$.message.style.color = "green";
+    this.async(this.close, 1000);
+    this.loginLabel = "Logout";
+    this.loginLevel = e.detail.response.user.isStaff ? "Staff" : "Customer";
+    this.loginLevel = e.detail.response.user.isManager ? "Manager" : "Customer";
+    this.loginLevel = e.detail.response.user.uname +", " +  this.loginLevel;
+
+    } else {
+    this.message = e.detail.response.result;
+    }
+
+    }
+    console.log("result", e.detail.response);
+    },
     authAction: function() {
-    if(this.loginStatus == "Login")
+    if(this.loginLabel == "Login")
     this.visible = true;
+    // else if(this.loginLabel == "Logout")
+    // post logout with ajax
     }
     });
   </script>
