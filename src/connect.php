@@ -2,10 +2,8 @@
 
 require 'neatdb.php';
 
-if( session_id() == "" ) {
-    session_start();
-    $_SESSION['loggedIn'] = False; 
-}
+session_start();
 
 $_SESSION['db'] = new NeatDB();
+
 ?>

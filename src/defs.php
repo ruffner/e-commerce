@@ -12,6 +12,8 @@ define("LOGIN_FAILED", "Bad username or password.");
 
 define("LOGOUT_SUCCESS", "logout");
 
+define("STATUS", "status");
+
 $BLANK_USER = Array(
 	"uname" => "",
 	"email" => "",

@@ -40,7 +40,9 @@
 	    <paper-button raised on-tap="login">Login</paper-button>
 	  </div>
 	</form>
-	<form hidden="false" is="iron-form" id="logoutForm" method="post" action="../src/logout.php" name="logout">
+	<form hidden="true" is="iron-form" id="logoutForm" method="post" action="../src/logout.php">
+	</form>
+	<form hidden="true" is="iron-form" id="statusForm" method="post" action="../src/status.php">
 	</form>
       </div>
     </paper-dialog>
@@ -77,11 +79,11 @@
     },
     listeners: {
     'loginForm.iron-form-response': 'handleResponse',
-    'logoutForm.iron-form-response': 'handleResponse'
+    'logoutForm.iron-form-response': 'handleResponse',
+    'statusForm.iron-form-response': 'handleResponse'
     },
     ready: function() {
-    this.loginLabel = "Login";
-    this.loginLevel = "";
+    this.$.statusForm.submit();
     },
     login: function() {
     this.$.loginForm.submit();
@@ -102,6 +104,7 @@
     this.$.message.style.color = 'red';
     },
     handleResponse: function(e) {
+    console.log("handleResponse", e.detail.response);
     if( e.detail.response && e.detail.response.result ) {
     if( e.detail.response.result == "success") {
     this.fire('login-changed', {"loggedIn": true});
@@ -110,20 +113,27 @@
     this.$.message.style.color = "green";
     this.async(this.close, 1000);
     this.async(this.resetFields, 1000);
-    this.loginLevel = e.detail.response.user.isStaff ? "Staff" : "Customer";
-    this.loginLevel = e.detail.response.user.isManager ? "Manager" : "Customer";
-    this.loginLevel = e.detail.response.user.uname +", " +  this.loginLevel;
 
+    this.setUserInfo(e.detail.response.user);
     } else if( e.detail.response.result == "logout" ) {
     this.fire('login-changed', {"loggedIn": false});
     this.loggedIn = false;
     this.loginLevel = "";
+    } else if( e.detail.response.result == "status" ) {
+    this.loggedIn = e.detail.response.loggedIn;
+    if(this.loggedIn)
+    this.setUserInfo(e.detail.response.user);
+    this.fire('login-changed', {"loggedIn": this.loggedIn});
     } else {
     this.message = e.detail.response.result;
     }
 
     }
-    console.log("result", e.detail.response);
+    },
+    setUserInfo: function(user) {
+    this.loginLevel = user.isStaff ? "Staff" : "Customer";
+    this.loginLevel = user.isManager ? "Manager" : "Customer";
+    this.loginLevel = user.uname +", " +  this.loginLevel;
     },
     authAction: function() {
     if(!this.loggedIn)
