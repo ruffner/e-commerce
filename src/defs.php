@@ -10,6 +10,8 @@ define("LOGIN_SUCCESS", "success");
 define("LOGIN_ERROR", "An error occured when querying the user database.");
 define("LOGIN_FAILED", "Bad username or password.");
 
+define("LOGOUT_SUCCESS", "logout");
+
 $BLANK_USER = Array(
 	"uname" => "",
 	"email" => "",

@@ -30,13 +30,17 @@
       <div>
 	<div class="alert" id="message">{{message}}</div>
 	<form is="iron-form" id="loginForm" method="post" action="../src/login.php">
-	  <paper-input name="uname" label="Username"></paper-input>
-	  <paper-input name="pass" label="Password" type="password"></paper-input>
-	  <div class="buttons">
-	    <paper-button raised on-tap="close">Cancel</paper-button>
-	    <div class="flex"></div>
+	  <paper-input id="unameField" name="uname" label="Username"></paper-input>
+	  <paper-input id="passField" name="pass" label="Password" type="password"></paper-input>
+	  <div class="buttons layout horizontal justified">
+	    <template is="dom-if" if="{{registerVisible}}">
+	      <paper-button raised on-tap="register">Register</paper-button>
+	    </template>
+	    <paper-button raised on-tap="close">Close</paper-button>
 	    <paper-button raised on-tap="login">Login</paper-button>
 	  </div>
+	</form>
+	<form hidden="false" is="iron-form" id="logoutForm" method="post" action="../src/logout.php" name="logout">
 	</form>
       </div>
     </paper-dialog>
@@ -53,12 +57,27 @@
     default: false,
     notifies: true
     },
-    loginLabel: String,
+    registerVisible: {
+    type: Boolean,
+    value: true,
+    notifies: true
+    },
+    loggedIn: {
+    type: Boolean,
+    value: false,
+    notifies: true
+    },
+    loginLabel: {
+    type: String,
+    value: "Login",
+    computed: 'computeLoginLabel(loggedIn)'
+    },
     loginLevel: String,
     message: String
     },
     listeners: {
-    'loginForm.iron-form-response': 'handleResponse'
+    'loginForm.iron-form-response': 'handleResponse',
+    'logoutForm.iron-form-response': 'handleResponse'
     },
     ready: function() {
     this.loginLabel = "Login";
@@ -67,20 +86,38 @@
     login: function() {
     this.$.loginForm.submit();
     },
+    logout: function() {
+    this.$.logoutForm.submit();
+    },
     close: function() {
     this.visible = false;
+    },
+    register: function() {
+    this.fire('register');
+    },
+    resetFields: function() {
+    this.$.unameField.value = "";
+    this.$.passField.value = "";
+    this.message = "";
+    this.$.message.style.color = 'red';
     },
     handleResponse: function(e) {
     if( e.detail.response && e.detail.response.result ) {
     if( e.detail.response.result == "success") {
+    this.fire('login-changed', {"loggedIn": true});
+    this.loggedIn = true;
     this.message = "Login successful!";
     this.$.message.style.color = "green";
     this.async(this.close, 1000);
-    this.loginLabel = "Logout";
+    this.async(this.resetFields, 1000);
     this.loginLevel = e.detail.response.user.isStaff ? "Staff" : "Customer";
     this.loginLevel = e.detail.response.user.isManager ? "Manager" : "Customer";
     this.loginLevel = e.detail.response.user.uname +", " +  this.loginLevel;
 
+    } else if( e.detail.response.result == "logout" ) {
+    this.fire('login-changed', {"loggedIn": false});
+    this.loggedIn = false;
+    this.loginLevel = "";
     } else {
     this.message = e.detail.response.result;
     }
@@ -89,10 +126,13 @@
     console.log("result", e.detail.response);
     },
     authAction: function() {
-    if(this.loginLabel == "Login")
+    if(!this.loggedIn)
     this.visible = true;
-    // else if(this.loginLabel == "Logout")
-    // post logout with ajax
+    else
+    this.logout();
+    },
+    computeLoginLabel: function(v) {
+    return v ? "Logout" : "Login";
     }
     });
   </script>

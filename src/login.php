@@ -59,6 +59,7 @@ $_SESSION['user'] = $user;
 
 echo json_encode( Array(
      "result" => LOGIN_SUCCESS,
+     "loggedIn" => True,
      "user" => $user
 ));
 

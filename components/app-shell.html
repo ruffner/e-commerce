@@ -24,14 +24,15 @@
       
     </style>
     
-    <paper-drawer-panel>
+    <paper-drawer-panel id="drawer">
       
       <paper-header-panel drawer>
 	<paper-toolbar>
 	  <div class="title">Menu</div>
 	</paper-toolbar>
 	<div class="layout vertical center-justified">
-	  <login-card></login-card>
+	  <login-card id="login"></login-card>
+	  <register-card id="register"></register-card>
 	  <search-card></search-card>
 	  <filter-card></filter-card>
 	</div>
@@ -44,12 +45,13 @@
 	  
 	  <div class="flex"></div>
 
-	  <cart-control></cart-control>
+	  <template is="dom-if" if="{{loggedIn}}">
+	    <cart-control></cart-control>
+	  </template>
 	  <!-- action buttons here -->
 
 	</paper-toolbar>
 	<div class="layout horizontal center-justified wrap">
-	  <register-card visible></register-card>
  	  <item-card></item-card>
 	  <item-card></item-card>
 	  <item-card></item-card>
@@ -70,7 +72,31 @@
 
   <script>
     Polymer({
-    is: "app-shell"
+    is: "app-shell",
+    properties: {
+    loggedIn: {
+    type: Boolean,
+    readyOnly: true,
+    value: false
+    }
+    },
+    listeners: {
+    'login.login-changed': 'setLogin',
+    'login.register': 'showRegisterCard',
+    'register.register-success': 'showLoginCard'
+    },
+    setLogin: function(e) {
+    this.loggedIn = e.detail.loggedIn;
+    },
+    showRegisterCard: function() {
+    this.$.login.visible = false;
+    this.$.register.visible = true;
+    },
+    showLoginCard: function(e) {
+    if(e.detail.registered)
+    this.$.login.registerVisible = false;
+    this.$.login.visible = true;
+    }
     });
   </script>
 
