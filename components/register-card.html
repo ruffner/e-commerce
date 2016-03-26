@@ -8,62 +8,60 @@
 <dom-module id="register-card">
   <template>
     <style include="iron-flex iron-flex-alignment">
-
     </style>
-
+    
     <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
       <h2>Register</h2>
       <div id="content">
-	<form is="iron-form" id="regForm" method="post" action="../src/register.php">
-	  <paper-input name="email" label="Email"></paper-input>
-	  <paper-input name="uname" label="Username"></paper-input>
-	  <paper-input name="pass" label="Password" type="password"></paper-input>
-	  <div class="buttons layout horizontal justified">
-	    <paper-button raised on-tap="close">Cancel</paper-button>
-	    <paper-button raised on-tap="register">Register</paper-button>
-	  </div>
-	</form>
-      </div>
-    </paper-dialog>
-
-
+				<form is="iron-form" id="regForm" method="post" action="../src/register.php">
+					<paper-input name="email" label="Email"></paper-input>
+					<paper-input name="uname" label="Username"></paper-input>
+					<paper-input name="pass" label="Password" type="password"></paper-input>
+				</form>
+			</div>
+			<div class="buttons layout horizontal justified">
+				<paper-button raised on-tap="close">Cancel</paper-button>
+				<paper-button raised on-tap="register">Register</paper-button>
+			</div>
+		</paper-dialog>
+		
   </template>
-
+  
   <script>
     Polymer({ 
-		is: "register-card",
-		properties: {
-			visible: {
-			type: Boolean,
-			default: false,
-			notifies: true
-			}
-		},
-		listeners: {
-			'regForm.iron-form-response': 'handleResponse'
-		},
-		register: function() {
-			 this.$.regForm.submit();
-		},
-		handleResponse(e) {
-			if( e.detail.response && e.detail.response.result ) {
-				if( e.detail.response.result == "success" ) {
-					this.$.content.innerHTML = "Successfully registered, you may now login.";
-    					this.async(this.close, 1000);
-    					this.async(this.registerSuccess, 1100);
-				} else {
-					this.$.content.innerHTML = e.detail.response.result;
+			is: "register-card",
+			properties: {
+				visible: {
+					type: Boolean,
+					default: false,
+					notifies: true
 				}
-			} else {
-				this.this.$.content.innerHTML = "Error while contacting registration page.";
-			}
-		},
-		close: function() {
-			this.visible = false;
-		},
-    registerSuccess: function() {
-    this.fire('register-success', {"registered": true});
-    }
+			},
+			listeners: {
+				'regForm.iron-form-response': 'handleResponse'
+			},
+			register: function() {
+				 this.$.regForm.submit();
+			},
+			handleResponse(e) {
+				if( e.detail.response && e.detail.response.result ) {
+					if( e.detail.response.result == "success" ) {
+						this.$.content.innerHTML = "Successfully registered, you may now login.";
+						this.async(this.close, 1000);
+						this.async(this.registerSuccess, 1100);
+					} else {
+						this.$.content.innerHTML = e.detail.response.result;
+					}
+				} else {
+					this.$.content.innerHTML = "Error while contacting registration page.";
+				}
+			},
+			close: function() {
+				this.visible = false;
+			},
+	    registerSuccess: function() {
+	    	this.fire('register-success', {"registered": true});
+	    }
     });
   </script>
 

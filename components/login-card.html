@@ -11,139 +11,140 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       .alert {
-      color: red;
+        color: red;
       }
     </style>
     <style is="custom-style">
     </style>
-
+    
     <paper-icon-item on-tap="authAction">
       <iron-icon icon="account-circle" item-icon></iron-icon>
       <paper-item-body two-line>
-	<div>{{loginLabel}}</div>
-	<div secondary>{{loginLevel}}</div>
+        <div>{{loginLabel}}</div>
+        <div secondary>{{loginLevel}}</div>
       </paper-item-body>
     </paper-icon-item>
-
+    
     <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
       <h2>Login</h2>
       <div>
-	<div class="alert" id="message">{{message}}</div>
-	<form is="iron-form" id="loginForm" method="post" action="../src/login.php">
-	  <paper-input id="unameField" name="uname" label="Username"></paper-input>
-	  <paper-input id="passField" name="pass" label="Password" type="password"></paper-input>
-	  <div class="buttons layout horizontal justified">
-	    <template is="dom-if" if="{{registerVisible}}">
-	      <paper-button raised on-tap="register">Register</paper-button>
-	    </template>
-	    <paper-button raised on-tap="close">Close</paper-button>
-	    <paper-button raised on-tap="login">Login</paper-button>
-	  </div>
-	</form>
-	<form hidden="true" is="iron-form" id="logoutForm" method="post" action="../src/logout.php">
-	</form>
-	<form hidden="true" is="iron-form" id="statusForm" method="post" action="../src/status.php">
-	</form>
+        <div class="alert" id="message">{{message}}</div>
+        <form is="iron-form" id="loginForm" method="post" action="../src/login.php">
+          <paper-input id="unameField" name="uname" label="Username"></paper-input>
+          <paper-input id="passField" name="pass" label="Password" type="password"></paper-input>
+          <div class="buttons layout horizontal justified">
+            <template is="dom-if" if="{{registerVisible}}">
+              <paper-button raised on-tap="register">Register</paper-button>
+            </template>
+            <paper-button raised on-tap="close">Close</paper-button>
+            <paper-button raised on-tap="login">Login</paper-button>
+          </div>
+        </form>
+        <form hidden="true" is="iron-form" id="logoutForm" method="post" action="../src/logout.php"></form>
+        <form hidden="true" is="iron-form" id="statusForm" method="post" action="../src/status.php"></form>
       </div>
     </paper-dialog>
-
-
+    
   </template>
 
   <script>
     Polymer({ 
-    is: "login-card",
-    properties: {
-    visible: {
-    type: Boolean,
-    default: false,
-    notifies: true
-    },
-    registerVisible: {
-    type: Boolean,
-    value: true,
-    notifies: true
-    },
-    loggedIn: {
-    type: Boolean,
-    value: false,
-    notifies: true
-    },
-    loginLabel: {
-    type: String,
-    value: "Login",
-    computed: 'computeLoginLabel(loggedIn)'
-    },
-    loginLevel: String,
-    message: String
-    },
-    listeners: {
-    'loginForm.iron-form-response': 'handleResponse',
-    'logoutForm.iron-form-response': 'handleResponse',
-    'statusForm.iron-form-response': 'handleResponse'
-    },
-    ready: function() {
-    this.$.statusForm.submit();
-    },
-    login: function() {
-    this.$.loginForm.submit();
-    },
-    logout: function() {
-    this.$.logoutForm.submit();
-    },
-    close: function() {
-    this.visible = false;
-    },
-    register: function() {
-    this.fire('register');
-    },
-    resetFields: function() {
-    this.$.unameField.value = "";
-    this.$.passField.value = "";
-    this.message = "";
-    this.$.message.style.color = 'red';
-    },
-    handleResponse: function(e) {
-    console.log("handleResponse", e.detail.response);
-    if( e.detail.response && e.detail.response.result ) {
-    if( e.detail.response.result == "success") {
-    this.fire('login-changed', {"loggedIn": true});
-    this.loggedIn = true;
-    this.message = "Login successful!";
-    this.$.message.style.color = "green";
-    this.async(this.close, 1000);
-    this.async(this.resetFields, 1000);
-
-    this.setUserInfo(e.detail.response.user);
-    } else if( e.detail.response.result == "logout" ) {
-    this.fire('login-changed', {"loggedIn": false});
-    this.loggedIn = false;
-    this.loginLevel = "";
-    } else if( e.detail.response.result == "status" ) {
-    this.loggedIn = e.detail.response.loggedIn;
-    if(this.loggedIn)
-    this.setUserInfo(e.detail.response.user);
-    this.fire('login-changed', {"loggedIn": this.loggedIn});
-    } else {
-    this.message = e.detail.response.result;
-    }
-
-    }
-    },
-    setUserInfo: function(user) {
-    this.loginLevel = user.isStaff ? "Staff" : "Customer";
-    this.loginLevel = user.isManager ? "Manager" : "Customer";
-    this.loginLevel = user.uname +", " +  this.loginLevel;
-    },
-    authAction: function() {
-    if(!this.loggedIn)
-    this.visible = true;
-    else
-    this.logout();
-    },
-    computeLoginLabel: function(v) {
-    return v ? "Logout" : "Login";
-    }
+      is: "login-card",
+      properties: {
+        visible: {
+            type: Boolean,
+          default: false,
+          notifies: true
+        },
+        registerVisible: {
+          type: Boolean,
+          value: true,
+          notifies: true
+        },
+        loggedIn: {
+          type: Boolean,
+          value: false,
+          notifies: true
+        },
+        loginLabel: {
+          type: String,
+          value: "Login",
+          computed: 'computeLoginLabel(loggedIn)'
+        },
+        loginLevel: String,
+        message: String
+      },
+      listeners: {
+        'loginForm.iron-form-response': 'handleResponse',
+        'logoutForm.iron-form-response': 'handleResponse',
+        'statusForm.iron-form-response': 'handleResponse'
+      },
+      ready: function() {
+        this.$.statusForm.submit();
+      },
+      login: function() {
+        this.$.loginForm.submit();
+      },
+      logout: function() {
+        this.$.logoutForm.submit();
+      },
+      close: function() {
+        this.visible = false;
+      },
+      register: function() {
+        this.fire('register');
+      },
+      resetFields: function() {
+        this.$.unameField.value = "";
+        this.$.passField.value = "";
+        this.message = "";
+        this.$.message.style.color = 'red';
+      },
+      handleResponse: function(e) {
+        console.log("handleResponse", e.detail.response);
+        if( e.detail.response && e.detail.response.result ) {
+          if( e.detail.response.result == "success") {
+            this.fire('login-changed', {"loggedIn": true});
+            
+            this.loggedIn = true;
+            this.message = "Login successful!";
+            this.$.message.style.color = "green";
+            
+            this.async(this.close, 1000);
+            this.async(this.resetFields, 1000);
+            
+            this.setUserInfo(e.detail.response.user);
+          } else if( e.detail.response.result == "logout" ) {
+            this.fire('login-changed', {"loggedIn": false});
+            
+            this.loggedIn = false;
+            this.loginLevel = "";
+          } else if( e.detail.response.result == "status" ) {
+            this.loggedIn = e.detail.response.loggedIn;
+            
+            if(this.loggedIn)
+              this.setUserInfo(e.detail.response.user);
+              
+            this.fire('login-changed', {"loggedIn": this.loggedIn});
+          } else {
+            this.message = e.detail.response.result;
+          }
+        }
+      },
+      setUserInfo: function(user) {
+        this.loginLevel = user.isStaff ? "Staff" : "Customer";
+        this.loginLevel = user.isManager ? "Manager" : "Customer";
+        this.loginLevel = user.uname +", " +  this.loginLevel;
+      },
+      authAction: function() {
+        if(!this.loggedIn)
+          this.visible = true;
+        else
+          this.logout();
+      },
+      computeLoginLabel: function(v) {
+        return v ? "Logout" : "Login";
+      }
     });
   </script>
 
