@@ -35,24 +35,29 @@ $user = $BLANK_USER;
 $user['uname'] = $_POST['uname'];
 $user['email'] = $res[0]['email'];
 
+$cid = $res[0]['cid'];
 
 // decide staff status
 
-$sql = "SELECT * FROM Staff WHERE uname=".$uname;
+$sql = "SELECT * FROM Staff WHERE sid=".$cid;
 $res = $_SESSION['db']->select($sql);
 
 if( count($res) > 0 ) {
     $user['isStaff'] =  True;
+} else {
+    $user['isStaff'] = False;
 }
 
 
 // decide manager status
 
-$sql = "SELECT * FROM Manager WHERE uname=".$uname;
+$sql = "SELECT * FROM Manager WHERE mid=".$cid;
 $res = $_SESSION['db']->select($sql);
 
 if( count($res) > 0 ) {
     $user['isManager'] = True;
+} else {
+    $user['isManager'] = False;
 }
 
 $_SESSION['user'] = $user;

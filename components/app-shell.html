@@ -11,6 +11,7 @@
 <link rel="import" href="filter-card.html">
 <link rel="import" href="search-card.html">
 <link rel="import" href="login-card.html">
+<link rel="import" href="item-tray.html">
 <link rel="import" href="item-card.html">
 
 <dom-module id="app-shell">
@@ -25,78 +26,66 @@
     </style>
     
     <paper-drawer-panel id="drawer">
-      
       <paper-header-panel drawer>
-	<paper-toolbar>
-	  <div class="title">Menu</div>
-	</paper-toolbar>
-	<div class="layout vertical center-justified">
-	  <login-card id="login"></login-card>
-	  <register-card id="register"></register-card>
-	  <search-card></search-card>
-	  <filter-card></filter-card>
-	</div>
+        <paper-toolbar>
+          <div class="title">Menu</div>
+        </paper-toolbar>
+        <div class="layout vertical center-justified">
+          <login-card id="login"></login-card>
+          <register-card id="register"></register-card>
+          <search-card></search-card>
+          <filter-card></filter-card>
+        </div>
       </paper-header-panel>
-
       <paper-header-panel main>
-	<paper-toolbar>
-	  <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-	  <div class="title">Simple Store</div>
-	  
-	  <div class="flex"></div>
-
-	  <template is="dom-if" if="{{loggedIn}}">
-	    <cart-control></cart-control>
-	  </template>
-	  <!-- action buttons here -->
-
-	</paper-toolbar>
-	<div class="layout horizontal center-justified wrap">
- 	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	  <item-card></item-card>
-	</div>
+        <paper-toolbar>
+          <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+          <div class="title">Simple Store</div>
+          <div class="flex"></div>
+          <template is="dom-if" if="{{loggedIn}}">
+            <cart-control></cart-control>
+          </template>
+        </paper-toolbar>
+        
+        <item-tray filterList="{{filters}}"></item-tray>
+        
       </paper-header-panel>
     </paper-drawer-panel>
     
-    </template>
+  </template>
 
   <script>
     Polymer({
-    is: "app-shell",
-    properties: {
-    loggedIn: {
-    type: Boolean,
-    readyOnly: true,
-    value: false
-    }
-    },
-    listeners: {
-    'login.login-changed': 'setLogin',
-    'login.register': 'showRegisterCard',
-    'register.register-success': 'showLoginCard'
-    },
-    setLogin: function(e) {
-    this.loggedIn = e.detail.loggedIn;
-    },
-    showRegisterCard: function() {
-    this.$.login.visible = false;
-    this.$.register.visible = true;
-    },
-    showLoginCard: function(e) {
-    if(e.detail.registered)
-    this.$.login.registerVisible = false;
-    this.$.login.visible = true;
-    }
+      is: "app-shell",
+      properties: {
+        loggedIn: {
+          type: Boolean,
+          readyOnly: true,
+          value: false
+        },
+        filters: {
+          type: Array,
+          value: [],
+          notify: true
+        }
+      },
+      listeners: {
+        'login.login-changed': 'setLogin',
+        'login.register': 'showRegisterCard',
+        'register.register-success': 'showLoginCard'
+      },
+      setLogin: function(e) {
+        this.loggedIn = e.detail.loggedIn;
+      },
+      showRegisterCard: function() {
+        this.$.login.visible = false;
+        this.$.register.visible = true;
+      },
+      showLoginCard: function(e) {
+        if(e.detail.registered)
+          this.$.login.registerVisible = false;
+        this.$.login.visible = true;
+      }
     });
   </script>
 

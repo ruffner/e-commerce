@@ -2,6 +2,8 @@
 <link rel="import" href="../bower_components/font-roboto/roboto.html">
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
@@ -9,41 +11,64 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
     </style>
-
+    
     <style is="custom-style">
       .square {
-      margin: 15px;
-      width: 234px;
-      height: 234px;
-      }
-      .title {
-      height: 40px;
-      background: #ddd;
+        margin: 15px;
+        width: 234px;
+        height: 234px;
       }
       .bbar {
-      margin: 10px;
+        width: 100%;
+      }
+      paper-fab {
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      .money {
+        margin-left: 10px;
       }
     </style>
-
-    <paper-material z="1" class="square layout vertical">
-      <div class="title layout horizontal center-center">Item Title</div>
-      <iron-image src="" class="flex"></iron-image>
+    
+    <paper-material z="1" class="square layout vertical center">
+      <paper-icon-item class="title">
+        <div item-icon>{{data.quantity}}</div>
+        <paper-item-body two-line>
+          <div>{{data.pname}}</div>
+          <div secondary>{{data.ptype}}</div>
+        </paper-item-body>
+      </paper-icon-item>
+      
+      <iron-image src="{{data.image}}" class="flex"></iron-image>
+      
       <div class="bbar layout horizontal center">
-	<div>$3.14</div>
-	<div class="flex"></div>
-	<paper-button raised on-tap="addToCart">BUY</paper-button>
+        <div class="money">${{price}}</div>
+        <div class="flex"></div>
+        <paper-fab raised mini toggles icon="add-shopping-cart" on-tap="addToCart">
+        </paper-fab>
       </div>
     </paper-material>
-
-
+    
   </template>
 
   <script>
     Polymer({
-    is: "item-card",
-    properties: {
-
-    }
+      is: "item-card",
+      properties: {
+        data: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+        price: {
+          type: Number,
+          computed: "computePrice(data.cost, data.discount)",
+          readOnly: true
+        }
+      },
+      computePrice: function(cost, discount) {
+        return (cost - cost*discount);
+      }
     });
   </script>
 
