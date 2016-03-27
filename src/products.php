@@ -4,16 +4,16 @@ header('Content-Type: application/json');
 
 require 'defs.php';
 
-/*if( !isset($_POST['filter']) ){
+if( !isset($_GET['filter']) ){
     echo json_encode( Array("result" => WRONG_PARAMS) );
 	exit;
-}*/
+}
 
 require 'connect.php';
 
-$filter = json_decode($_POST['filter']);
+$filter = json_decode($_GET['filter']);
 
-if(count($filter) == 0) {
+if( count($filter) == 0 || $filter[0] == "" ) {
     $sql = "SELECT pname,ptype,cost,discount,quantity FROM Item";
 } else {
     $sql = "SELECT pname,ptype,cost,discount,quantity FROM Item WHERE ptype IN ('" . implode("','", $filter) . "')";

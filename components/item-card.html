@@ -3,7 +3,6 @@
 <link rel="import" href="../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
-<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
@@ -18,21 +17,14 @@
         width: 234px;
         height: 234px;
       }
-      .bbar {
-        width: 100%;
-      }
-      paper-fab {
-        margin-right: 10px;
-        margin-bottom: 10px;
-      }
-      .money {
-        margin-left: 10px;
+      paper-button {
+        margin: 10px;
       }
     </style>
     
-    <paper-material z="1" class="square layout vertical center">
-      <paper-icon-item class="title">
-        <div item-icon>{{data.quantity}}</div>
+    <paper-material z="1" class="square layout vertical center-justified">
+      <paper-icon-item toggles>
+        <div item-icon>${{price}}</div>
         <paper-item-body two-line>
           <div>{{data.pname}}</div>
           <div secondary>{{data.ptype}}</div>
@@ -41,11 +33,11 @@
       
       <iron-image src="{{data.image}}" class="flex"></iron-image>
       
-      <div class="bbar layout horizontal center">
-        <div class="money">${{price}}</div>
-        <div class="flex"></div>
-        <paper-fab raised mini toggles icon="add-shopping-cart" on-tap="addToCart">
-        </paper-fab>
+      <div class="layout horizontal center">
+        <paper-button class="flex" raised icon="add-shopping-cart" on-tap="addToCart">
+          <iron-icon icon="add-shopping-cart"></iron-icon>
+          Add To Cart
+        </paper-button>
       </div>
     </paper-material>
     

@@ -12,35 +12,42 @@
     </style>
     <style is="custom-style">
       paper-menu.sublist {
-      padding-left: 30px;
+        padding-left: 30px;
       }
     </style>
     
-     <paper-menu>
-       <paper-submenu>
-	 <paper-icon-item class="menu-trigger">
-	   <iron-icon icon="filter-list" item-icon></iron-icon>
-	   Filter
-	 </paper-icon-item>
-	 <paper-menu class="menu-content sublist" multi>
-	   <paper-item>Toys</paper-item>
-	   <paper-item>Games</paper-item>
-	   <paper-item>Fun Stuff</paper-item>
-	   <paper-item>The Good Stuff</paper-item>
-	 </paper-menu>
-       </paper-submenu>
-     </paper-menu>
-
-
-  </template>
-
+    <paper-menu>
+      <paper-submenu>
+        <paper-icon-item class="menu-trigger">
+          <iron-icon icon="filter-list" item-icon></iron-icon>
+          Filter
+        </paper-icon-item>
+        <paper-menu id="filterMenu" class="menu-content sublist" multi attr-for-selected="label">
+          <paper-item label="Toys">Toys</paper-item>
+          <paper-item label="Games">Games</paper-item>
+          <paper-item label="Fun Stuff">Fun Stuff</paper-item>
+          <paper-item label="The Good Stuff">The Good Stuff</paper-item>
+        </paper-menu>
+      </paper-submenu>
+    </paper-menu>
+    </template>
+    
   <script>
     Polymer({
-    is: "filter-card",
-    properties: {
-    }
+      is: "filter-card",
+      properties: {
+        filter: {
+          type: Array,
+          notify: true
+        }
+      },
+      listeners: {
+        'filterMenu.iron-select': 'filterChanged',
+        'filterMenu.iron-deselect': 'filterChanged'
+      },
+      filterChanged: function(e) {
+        console.log("new filter: ", this.$.filterMenu.selectedValues);
+      }
     });
   </script>
-
-
 </dom-module>

@@ -13,9 +13,9 @@
     <iron-ajax 
       id="ajax"
       url="../src/products.php"
-      method="POST"
+      content-type="application/json"
       handle-as="json"
-      body='{"filter": "mushrooms"}'
+      method="GET"
       on-response="onProductUpdate"
       debounce-duration="300">
     </iron-ajax>
@@ -51,10 +51,11 @@
       console.log("list changed");
       
       if(this.$.ajax && newList && newList.length > 0) {
-        //this.$.ajax.body = {"filter": newList};
+        this.$.ajax.params = {'filter': newList};
         this.$.ajax.generateRequest();
       } else if(this.$.ajax && newList && newList.length == 0) {
-        //this.$.ajax.body = {"filter": []};
+        this.$.ajax.params = {'filter': ['']};
+        console.log(this.$.ajax.params);
         this.$.ajax.generateRequest();
       } else {
         console.log("ajax not ready or list null");
