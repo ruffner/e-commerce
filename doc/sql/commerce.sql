@@ -46,6 +46,18 @@ CREATE TABLE Item (
   CHECK (quantity >=0)
 ) ENGINE=INNODB;
 
+CREATE TRIGGER discountTrig
+AFTER UPDATE OF discount ON Item
+REFERENCING NEW ROW AS n, OLD ROW AS o
+WHEN (discount >=1 OR discount <0)
+SET n.discount=o.discount;
+
+CREATE TRIGGER itemQuantityTrig
+AFTER UPDATE OF quantity ON Iteam
+REFERECING NEW ROW AS n
+WHEN (n.quantity < 0)
+SET n.quantity=0;
+
 CREATE TABLE Orders (
   cid INTEGER NOT NULL,
   pid INTEGER NOT NULL,
@@ -59,3 +71,15 @@ CREATE TABLE Orders (
   CHECK (status="cart"),
   CHECK (quantity > 0)
 ) ENGINE=INNODB;
+
+CREATE TRIGGER statusTrig
+AFTER UPDATE OF status ON Orders
+REFERENCING NEW ROW AS n, OLD ROW AS o
+WHEN NOT (n.status="cart" OR n.status="pending" OR n.status="shipped")
+SET n.status=o.status;
+
+CREATE TRIGGER quantityTrig
+AFTER UPDATE OF quantity ON Orders
+REFERENCING NEW ROW AS n
+WHEN (n.quantity <0)
+SET n.quantity=0;
