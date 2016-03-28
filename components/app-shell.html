@@ -1,11 +1,14 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-drawer-panel/paper-drawer-panel.html">
 <link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
+<link rel="import" href="inventory-card.html">
 <link rel="import" href="register-card.html">
 <link rel="import" href="cart-control.html">
 <link rel="import" href="filter-card.html">
@@ -22,7 +25,6 @@
       }
     </style>
     <style is="custom-style">
-      
     </style>
     
     <paper-drawer-panel id="drawer">
@@ -41,13 +43,32 @@
         <paper-toolbar>
           <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
           <div class="title">Simple Store</div>
-          <div class="flex"></div>
+          
+          <paper-tabs id="tabs" class="end-justified" selected="{{activeTab}}">
+              <paper-tab>SHOP</paper-tab>
+              <template is="dom-if" if="{{isAdmin}}">
+                <paper-tab>INVENTORY</paper-tab>
+              </template>
+          </paper-tabs>
+          
           <template is="dom-if" if="{{loggedIn}}">
             <cart-control></cart-control>
           </template>
         </paper-toolbar>
         
-        <item-tray filterList="{{filters}}"></item-tray>
+        <iron-pages selected="{{activeTab}}">
+          <div>
+            <item-tray filterList="{{filters}}"></item-tray>
+          </div>
+          
+          <template is="dom-if" if="{{isAdmin}}">
+            <div>
+              <inventory-card></inventory-card>
+            </div>
+          </template>
+          
+        </iron-pages>
+        
         
       </paper-header-panel>
     </paper-drawer-panel>
@@ -67,15 +88,44 @@
           type: Array,
           value: [],
           notify: true
+        },
+        isStaff: {
+          type: Boolean,
+          default: false
+        },
+        isManager: {
+          type: Boolean,
+          default: false
+        },
+        isAdmin: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          computed: 'computeAdmin(isStaff, isManager)'
+        },
+        activeTab: {
+          type: Number,
+          value: 0,
+          notify: true
         }
       },
       listeners: {
         'login.login-changed': 'setLogin',
         'login.register': 'showRegisterCard',
-        'register.register-success': 'showLoginCard'
+        'register.register-success': 'showLoginCard',
+        'tabs.iron-select': 'updateContentPage'
       },
       setLogin: function(e) {
+        console.log("login update:", e.detail);
         this.loggedIn = e.detail.loggedIn;
+        
+        if(this.loggedIn) {
+          this.isStaff = e.detail.isStaff;
+          this.isManager = e.detail.isManager;
+        } else {
+          this.isStaff = false;
+          this.isManager = false;
+        }
       },
       showRegisterCard: function() {
         this.$.login.visible = false;
@@ -85,6 +135,13 @@
         if(e.detail.registered)
           this.$.login.registerVisible = false;
         this.$.login.visible = true;
+      },
+      computeAdmin: function(isStaff, isManager) {
+        console.log("isAdmin:", isStaff || isManager);
+        return isStaff || isManager;
+      },
+      updateContentPage: function(e) {
+        
       }
     });
   </script>

@@ -104,28 +104,25 @@
         console.log("handleResponse", e.detail.response);
         if( e.detail.response && e.detail.response.result ) {
           if( e.detail.response.result == "success") {
-            this.fire('login-changed', {"loggedIn": true});
+            this.fireLogin(e.detail.response);
+            if(this.loggedIn)
+              this.setUserInfo(e.detail.response.user);
             
-            this.loggedIn = true;
             this.message = "Login successful!";
             this.$.message.style.color = "green";
             
             this.async(this.close, 1000);
             this.async(this.resetFields, 1000);
-            
-            this.setUserInfo(e.detail.response.user);
           } else if( e.detail.response.result == "logout" ) {
             this.fire('login-changed', {"loggedIn": false});
             
             this.loggedIn = false;
             this.loginLevel = "";
           } else if( e.detail.response.result == "status" ) {
-            this.loggedIn = e.detail.response.loggedIn;
+            this.fireLogin(e.detail.response);
             
             if(this.loggedIn)
               this.setUserInfo(e.detail.response.user);
-              
-            this.fire('login-changed', {"loggedIn": this.loggedIn});
           } else {
             this.message = e.detail.response.result;
           }
@@ -133,7 +130,7 @@
       },
       setUserInfo: function(user) {
         this.loginLevel = user.isStaff ? "Staff" : "Customer";
-        this.loginLevel = user.isManager ? "Manager" : "Customer";
+        this.loginLevel = user.isManager ? "Manager" : (user.isStaff ? "Staff" : "Customer");
         this.loginLevel = user.uname +", " +  this.loginLevel;
       },
       authAction: function() {
@@ -144,6 +141,20 @@
       },
       computeLoginLabel: function(v) {
         return v ? "Logout" : "Login";
+      },
+      fireLogin: function(e) {
+        this.loggedIn = e.loggedIn;
+        if(this.loggedIn) {
+          this.fire('login-changed', {
+            "loggedIn": e.loggedIn, 
+            "isStaff": e.user.isStaff, 
+            "isManager": e.user.isManager
+          });
+        } else {
+          this.fire('login-changed', {
+            "loggedIn": e.loggedIn
+          });
+        }
       }
     });
   </script>
