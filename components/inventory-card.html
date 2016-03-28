@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="inventory-card">
+  <template>
+    <style  include="iron-flex iron-flex-alignment">
+      .title {
+        font-size: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        background: #ddd;
+      }
+    </style> 
+    <style is="custom-style">
+      paper-material {
+        margin: 15px;
+      }
+    </style>
+    
+    <paper-material z="1">
+      <div class="title layout horizontal center">
+        <span>Inventory</span>
+        <div class="flex"></div>
+        <paper-icon-button icon="refresh"></paper-icon-button>
+        <paper-icon-button icon="add">+</paper-icon-button>
+      </div>
+      
+      <br><br><br>
+      
+      
+    </paper-material>
+    
+  </template>
+  
+  <script>
+    Polymer({
+      is: "inventory-card"
+    });
+      
+  </script>
+</dom-module>
