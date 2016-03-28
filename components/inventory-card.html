@@ -1,8 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="inventory-list-item.html">
 
 <dom-module id="inventory-card">
   <template>
@@ -11,7 +14,8 @@
         font-size: 20px;
         padding-left: 20px;
         padding-right: 20px;
-        background: #ddd;
+        background: #333;
+        color: white;
       }
     </style> 
     <style is="custom-style">
@@ -20,15 +24,27 @@
       }
     </style>
     
+    <form is="iron-form"  id="getInventoryForm" method="post" action="../src/getInventory.php">
+      
+    </form>
+    <form is="iron-form" id="updateInventoryForm" method="post" action="../src/updateInventory.php">
+      
+    </form>
+    
     <paper-material z="1">
       <div class="title layout horizontal center">
         <span>Inventory</span>
         <div class="flex"></div>
         <paper-icon-button icon="refresh"></paper-icon-button>
-        <paper-icon-button icon="add">+</paper-icon-button>
+        <paper-icon-button icon="add"></paper-icon-button>
       </div>
       
-      <br><br><br>
+      <div class="layout vertical center-justified">
+        <inventory-list-item></inventory-list-item>
+        <inventory-list-item></inventory-list-item>
+        <inventory-list-item></inventory-list-item>
+        <inventory-list-item></inventory-list-item>
+      </div>
       
       
     </paper-material>
@@ -37,7 +53,24 @@
   
   <script>
     Polymer({
-      is: "inventory-card"
+      is: "inventory-card",
+      properties: {
+        inventory: {
+          type: Object,
+          notify: true,
+          value: {}
+        }
+      },
+      listeners: {
+        'getInventoryForm.iron-form-response': 'refreshInventory',
+        'updateInventoryForm.iron-form-response': 'notifyOfUpdate'
+      },
+      refreshInventory: function(e) {
+        
+      },
+      notifyOfUpdate: function(e) {
+        
+      }
     });
       
   </script>
