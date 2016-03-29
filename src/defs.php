@@ -14,6 +14,15 @@ define("LOGOUT_SUCCESS", "logout");
 
 define("STATUS", "status");
 
+define("ERR_NOT_LOGGED_IN", "Could not complete request; not logged in.");
+define("ERR_NOT_ADMIN", "Could not preform action; insufficient privelidges.");
+
+define("UPDATE_SUCCESS", "success");
+define("UPDATE_SUCCESS_MESSAGE", "Updated product info!");
+define("UPDATE_ADD_SUCCESS_MESSAGE", "Inserted new product!");
+define("UPDATE_FAIL", "Could not update product!");
+define("UPDATE_ADD_FAIL", "Could not insert product!");
+
 $BLANK_USER = Array(
 	"uname" => "",
 	"email" => "",
