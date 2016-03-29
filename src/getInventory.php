@@ -18,6 +18,7 @@ $res = $_SESSION['db']->select($sql);
 for( $i=0; $i<count($res); $i=$i+1 ) {
   $res[$i]['price'] = $res[$i]['cost'] - $res[$i]['cost']*$res[$i]['discount'];
   $res[$i]['editing'] = False;
+  $res[$i]['icon'] = 'create';
 }
 
 echo json_encode( Array(
