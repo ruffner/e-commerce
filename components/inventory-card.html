@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
@@ -165,6 +166,8 @@
       </div>
 
   </paper-scroll-header-panel>
+  
+  <paper-toast id="toast" text="{{toastMessage}}"></paper-toast>
   </template>
   
   <script>
@@ -270,6 +273,18 @@
       },
       onUpdateResponse: function(e) {
         console.log("product update response: ", e.detail.response);
+        if( e.detail.response && e.detail.response.result ) {
+          if(e.detail.response.result == "success") {
+            this.toastMessage = e.detail.response.message;
+            this.$.toast.open();
+          } else {
+            this.toastMessage = "Error: " + e.detail.response.result;
+            this.$.toast.open();
+          }
+        } else {
+          this.toastMessage = "Error contacting update page!";
+          this.$.toast.open();
+        }
       },
     });
       
