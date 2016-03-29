@@ -1,54 +1,153 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-
-<link rel="import" href="inventory-list-item.html">
+<link rel="import" href="../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
 
 <dom-module id="inventory-card">
   <template>
     <style  include="iron-flex iron-flex-alignment">
-      .title {
-        font-size: 20px;
-        padding-left: 20px;
-        padding-right: 20px;
-        background: #333;
-        color: white;
+      .rightSpace {
+        margin-right: 30px;
+      }
+      .item {
+        margin: 10px;
+        padding: 20px;
       }
     </style> 
     <style is="custom-style">
-      paper-material {
-        margin: 15px;
+      paper-scroll-header-panel {
+        position: absolute;
+        top: 64px;
+        right: 0px;
+        bottom: 0;
+        left: 0px;
       }
+      
+      paper-toolbar {
+        --paper-toolbar-height: 40px;
+        --paper-toolbar-sm-height: 40px;
+      }
+      
     </style>
     
     <form is="iron-form"  id="getInventoryForm" method="post" action="../src/getInventory.php">
-      
+      <input type="hidden" name="getInventory"></input>
     </form>
     <form is="iron-form" id="updateInventoryForm" method="post" action="../src/updateInventory.php">
       
     </form>
     
-    <paper-material z="1">
-      <div class="title layout horizontal center">
-        <span>Inventory</span>
+    <paper-scroll-header-panel fixed>
+      <paper-toolbar>
+        <div class="flex title">Inventory</div>
         <div class="flex"></div>
-        <paper-icon-button icon="refresh"></paper-icon-button>
         <paper-icon-button icon="add"></paper-icon-button>
+        <paper-icon-button icon="refresh"></paper-icon-button>
+      </paper-toolbar>
+  
+      <div class="content">
+  
+        <div class="layout vertical center-justified">
+        <template is="dom-repeat" items="{{inventory}}">
+          
+          <paper-material class="item layout horizontal center wrap">
+              
+              <div class="layout vertical">
+                <paper-input 
+                  id="name" 
+                  label="Product Name"
+                  value="{{item.pname}}"
+                  disabled="{{!item.editing}}"
+                  always-float-label>
+                </paper-input>
+                
+                <paper-input 
+                  id="quantity"
+                  label="Quantity"
+                  value="{{item.quantity}}"
+                  disabled="{{!item.editing}}"
+                  always-float-label>
+                </paper-input>
+                  
+                <paper-input 
+                  id="price"
+                  label="Price"
+                  value="{{item.price}}"
+                  disabled="{{!item.editing}}"
+                  always-float-label>
+                  <div prefix>$</div>
+                </paper-input>
+                  
+              </div>
+              
+              <div class="layout vertical" style="margin-left: 10px;">
+                <paper-input 
+                  id="name" 
+                  label="Product Category"
+                  value="{{item.ptype}}"
+                  disabled="{{!item.editing}}"
+                  always-float-label>
+                </paper-input>
+                
+                <paper-input 
+                  id="quantity"
+                  label="Product Type"
+                  value="{{item.psubtype}}"
+                  disabled="{{!item.editing}}"
+                  always-float-label>
+                </paper-input>
+                  
+                <paper-input 
+                  id="price"
+                  label="Discount"
+                  value="{{item.discount}}"
+                  disabled="{{!item.editing}}"
+                  max-length="3"
+                  max="100"
+                  min="0"
+                  always-float-label>
+                  <div suffix>%</div>
+                </paper-input>
+                
+              </div>
+              
+              <div class="flex"></div>
+              
+              <paper-textarea 
+                label="Info"
+                class="rightSpace"
+                value="{{item.info}}"
+                disabled="{{!item.editing}}"
+                maxlength="50"
+                always-float-label>
+              </paper-textarea>
+            
+            <div class="layout vertical around-justified">
+              <paper-icon-button 
+                toggles
+                active="{{item.editing}}"
+                icon="create">
+              </paper-icon-button>
+              <paper-icon-button 
+                on-tap="{{removeItem}}"
+                icon="delete">
+              </paper-icon-button>
+            </div>
+            
+          </paper-material>
+        </template>
       </div>
-      
-      <div class="layout vertical center-justified">
-        <inventory-list-item></inventory-list-item>
-        <inventory-list-item></inventory-list-item>
-        <inventory-list-item></inventory-list-item>
-        <inventory-list-item></inventory-list-item>
+  
       </div>
-      
-      
-    </paper-material>
-    
+
+  </paper-scroll-header-panel>
   </template>
   
   <script>
@@ -56,17 +155,29 @@
       is: "inventory-card",
       properties: {
         inventory: {
-          type: Object,
+          type: Array,
           notify: true,
-          value: {}
+          value: []
         }
       },
       listeners: {
         'getInventoryForm.iron-form-response': 'refreshInventory',
         'updateInventoryForm.iron-form-response': 'notifyOfUpdate'
       },
+      ready: function() {
+        this.$.getInventoryForm.submit();
+      },
       refreshInventory: function(e) {
-        
+        if( e.detail.response && e.detail.response.result ) {
+          if( e.detail.response.result == "success") {
+            this.inventory = e.detail.response.items;
+            console.log("new inventory: ", this.inventory);
+          } else {
+            console.log("error requesting inventory");
+          }
+        } else {
+          console.log("bad inventory page")
+        }
       },
       notifyOfUpdate: function(e) {
         
