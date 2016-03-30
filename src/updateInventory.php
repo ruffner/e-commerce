@@ -73,7 +73,7 @@ function addItem($item) {
   $pname = $db->quote($item->pname);
   $ptype = $db->quote($item->ptype);
   $psubtype = ($item->psubtype ? $db->quote($item->psubtype) : "''");
-  $cost = $db->quote($item->cost);
+  $cost = $item->cost;
   $discount = $db->quote($item->discount);
   $quantity = $db->quote($item->quantity);
   $image = ($item->image ? $db->quote($item->image) : "''");
