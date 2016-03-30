@@ -17,6 +17,7 @@ $res = $_SESSION['db']->select($sql);
 
 for( $i=0; $i<count($res); $i=$i+1 ) {
   $res[$i]['price'] = $res[$i]['cost'] - $res[$i]['cost']*$res[$i]['discount'];
+  $res[$i]['discount'] = $res[$i]['discount'] * 100;
   $res[$i]['editing'] = False;
   $res[$i]['icon'] = 'create';
 }

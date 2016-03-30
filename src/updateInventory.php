@@ -73,9 +73,9 @@ function addItem($item) {
   $pname = $db->quote($item->pname);
   $ptype = $db->quote($item->ptype);
   $psubtype = ($item->psubtype ? $db->quote($item->psubtype) : "''");
-  $cost = floatval($item->cost);
-  $discount = intval($item->discount);
-  $quantity = intval($item->quantity);
+  $cost = $item->cost;
+  $discount = $item->discount;
+  $quantity = $item->quantity;
   $image = ($item->image ? $db->quote($item->image) : "''");
   $info = ($item->info ? $db->quote($item->info) : "''");
   
@@ -93,9 +93,9 @@ function updateItem($item) {
   $pname = $db->quote($item->pname);
   $ptype = $db->quote($item->ptype);
   $psubtype = ($item->psubtype ? $db->quote($item->psubtype) : "''");
-  $cost = floatval($item->cost);
-  $discount = intval($item->discount);
-  $quantity = intval($item->quantity);
+  $cost = $item->cost;
+  $discount = ($item->discount > 1 ? $item->discount/100 : $item->discount);
+  $quantity = $item->quantity;
   $image = ($item->image ? $db->quote($item->image) : "''");
   $info = ($item->info ? $db->quote($item->info) : "''");
   
@@ -105,7 +105,6 @@ function updateItem($item) {
   $sql .= ", quantity=".$quantity.", image=".$image;
   $sql .= ", info=".$info." WHERE pid=".$item->pid;
   
-
   $db->query($sql);
   
   return $db->error();
