@@ -73,14 +73,14 @@ function addItem($item) {
   $pname = $db->quote($item->pname);
   $ptype = $db->quote($item->ptype);
   $psubtype = ($item->psubtype ? $db->quote($item->psubtype) : "''");
-  $cost = $item->cost;
-  $discount = $db->quote($item->discount);
-  $quantity = $db->quote($item->quantity);
+  $cost = floatval($item->cost);
+  $discount = intval($item->discount);
+  $quantity = intval($item->quantity);
   $image = ($item->image ? $db->quote($item->image) : "''");
   $info = ($item->info ? $db->quote($item->info) : "''");
   
   $sql =  "INSERT INTO Item (pname, ptype, psubtype, cost, discount, quantity, image, info) ";
-  $sql .= "VALUES (".$pname.",".$ptype.",".$psubtype.",".$cost.",".$discount.",".$quantity.",".$image.",".$info.")";
+  $sql .= "VALUES (".$pname.",".$ptype.",".$psubtype.",".intval($cost).",".$discount.",".$quantity.",".$image.",".$info.")";
 
   $db->query($sql);
   
@@ -93,15 +93,15 @@ function updateItem($item) {
   $pname = $db->quote($item->pname);
   $ptype = $db->quote($item->ptype);
   $psubtype = ($item->psubtype ? $db->quote($item->psubtype) : "''");
-  $cost = $item->cost;
-  $discount = $item->discount;
-  $quantity = $item->quantity;
+  $cost = floatval($item->cost);
+  $discount = intval($item->discount);
+  $quantity = intval($item->quantity);
   $image = ($item->image ? $db->quote($item->image) : "''");
   $info = ($item->info ? $db->quote($item->info) : "''");
   
   $sql =  "UPDATE Item SET pname=".$pname;
   $sql .= ", ptype=".$ptype.",psubtype=".$psubtype;
-  $sql .= ", cost=".$cost.", discount=".$discount;
+  $sql .= ", cost=".intval($cost).", discount=".$discount;
   $sql .= ", quantity=".$quantity.", image=".$image;
   $sql .= ", info=".$info." WHERE pid=".$item->pid;
   
