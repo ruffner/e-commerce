@@ -36,6 +36,8 @@
         --paper-toolbar-sm-height: 40px;
       }
       
+      
+      
     </style>
     
     <form 
@@ -54,6 +56,15 @@
       action="../src/updateInventory.php">
       
       <input type="hidden" name="itemToUpdate" value="{{newItem}}"></input>
+    </form>
+    
+    <form 
+      is="iron-form"
+      id="removeInventoryForm"
+      method="post"
+      action="../src/removeInventory.php">
+      
+      <input type="hidden" name="itemToDelete" value="{{itemToDelete}}"></input>
     </form>
     
     <paper-dialog id="affirmReloadDialog">
@@ -79,7 +90,7 @@
         <div class="layout vertical center-justified">
         <template is="dom-repeat" items="{{inventory}}">
           
-          <paper-material class="item layout horizontal center wrap">
+          <paper-material class="item layout horizontal">
               
               <div class="layout vertical">
                 <paper-input 
@@ -143,19 +154,27 @@
                 
               </div>
               
-              <div class="flex"></div>
-              
-              <paper-textarea 
-                label="Info"
-                class="rightSpace"
-                value="{{item.info}}"
-                disabled="{{!item.editing}}"
-                maxlength="50"
-                always-float-label>
-              </paper-textarea>
+              <div class="layout vertical center flex" style="margin-left: 10px;">
+                <paper-input 
+                  id="image"
+                  label="Image Path"
+                  value="{{item.image}}"
+                  disabled="{{!item.editing}}"
+                  always-float-label>
+                </paper-input>
+                <!--<paper-textarea 
+                  style="min-width: 50px; max-width: 400px;"
+                  label="Info"
+                  class="rightSpace"
+                  value="{{item.info}}"
+                  disabled="{{!item.editing}}"
+                  always-float-label>
+                </paper-textarea>-->
+              </div>
             
-            <div class="layout vertical around-justified">
+            <div class="layout vertical justified">
               <paper-icon-button on-tap="editItem" icon="{{item.icon}}"></paper-icon-button>
+              <div class="flex"></div>
               <paper-icon-button on-tap="removeItem" icon="delete"></paper-icon-button>
             </div>
             
@@ -192,12 +211,9 @@
           type: Object,
           value: {}
         },
-        rawItem: {
-          type: Object,
-          value: {
-            "new": true,
-            "icon": "create"
-          },
+        itemToDelete: {
+          type: Number,
+          value: null,
           readonly: true
         },
         itemEditing: false
@@ -205,6 +221,7 @@
       listeners: {
         'getInventoryForm.iron-form-response': 'onRefreshInventory',
         'updateInventoryForm.iron-form-response': 'onUpdateResponse',
+        'removeInventoryForm.iron-form-response': 'onRemoveResponse',
         'affirmReloadDialog.iron-overlay-closed': 'onReloadDialogResponse'
       },
       ready: function() {
@@ -223,16 +240,25 @@
         }
       },
       addItem: function(e) {
-        this.unshift('inventory', this.rawItem);
+        this.unshift('inventory', {
+              "new": true,
+              "editing": true,
+              "edited": false,
+              "icon": "save"
+            });
       },
       removeItem: function(e) {
         this.deletedItems.push(e.model.get('item'));
         this.splice('inventory', e.model.get('item.index'), 1);
-        console.log("model: ", e.model.get('item'));
+
+        this.itemToDelete = e.model.get('item.pid');
+        this.$.removeInventoryForm.submit();
       },
       restoreItem: function(e) {
-        if( this.deletedItems.length )
+        if( this.deletedItems.length ){
           this.unshift('inventory', this.deletedItems.pop());
+          this.inventory[0].new = true;
+        }    
       },
       reloadItems: function() {
         var newItems = false;
@@ -241,7 +267,7 @@
           if( this.inventory[i].new )
             newItems = true;
         
-        console.log("newItems", newItems)
+        console.log("newItems", newItems);
         
         if(!newItems)
           this.$.getInventoryForm.submit();
@@ -253,19 +279,25 @@
       editItem: function(e) {
         var model = e.model;
         
-        if( model.get('item.edited')  && model.get('item.editing')) {
+        if( !model.get('item.edited') && model.get('item.editing')) {
           model.set('item.editing', false);
           this.itemEditing = false;
           this.newItem = JSON.stringify(model.get('item'));
+          console.log("model:", model)
           console.log("item:", this.newItem, "submitting form");
           this.$.updateInventoryForm.submit();
           model.set('item.icon', 'create');
+          if( model.get('item.new') ){
+            model.set('item.new', false);
+            this.reloadItems();
+          }
         } else {
           this.itemEditing = true;
-          model.set('item.edited', true);
           model.set('item.editing', true);
           model.set('item.icon', 'save');
         }
+        
+        console.log("inventory:",this.inventory);
       },
       onReloadDialogResponse: function(e) {
         if( e.detail.confirmed )
@@ -273,6 +305,9 @@
       },
       onUpdateResponse: function(e) {
         console.log("product update response: ", e.detail.response);
+        
+        this.fireInventoryChange();
+        
         if( e.detail.response && e.detail.response.result ) {
           if(e.detail.response.result == "success") {
             this.toastMessage = e.detail.response.message;
@@ -286,6 +321,15 @@
           this.$.toast.open();
         }
       },
+      onRemoveResponse: function(e) {
+        console.log("product removal response:", e.detail.response);
+        
+        this.fireInventoryChange();
+      },
+      fireInventoryChange: function() {
+        this.staleProducts = true;
+        this.fire('stale-product');
+      }
     });
       
   </script>

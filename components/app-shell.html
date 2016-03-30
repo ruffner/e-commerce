@@ -62,12 +62,12 @@
         <div class="content">
         <iron-pages selected="{{activeTab}}">
           <div>
-            <item-tray filterList="{{filters}}"></item-tray>
+            <item-tray stale="{{reloadItems}}" filterList="{{filters}}"></item-tray>
           </div>
           
-          <template is="dom-if" if="{{isAdmin}}">
+          <template id="invTemplate" is="dom-if" if="{{isAdmin}}">
             <div>
-              <inventory-card></inventory-card>
+              <inventory-card on-stale-product="staleItems"></inventory-card>
             </div>
           </template>
           
@@ -111,13 +111,17 @@
           type: Number,
           value: 0,
           notify: true
+        },
+        reloadItems: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
       },
       listeners: {
         'login.login-changed': 'setLogin',
         'login.register': 'showRegisterCard',
-        'register.register-success': 'showLoginCard',
-        'tabs.iron-select': 'updateContentPage'
+        'register.register-success': 'showLoginCard'
       },
       setLogin: function(e) {
         console.log("login update:", e.detail);
@@ -145,8 +149,9 @@
         console.log("isAdmin:", isStaff || isManager);
         return isStaff || isManager;
       },
-      updateContentPage: function(e) {
-        
+      staleItems: function(e) {
+        console.log("stale items, refreshing");
+        document.querySelector('item-tray').refresh();
       }
     });
   </script>
