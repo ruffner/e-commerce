@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-badge/paper-badge.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-drawer-panel/paper-drawer-panel.html">
 <link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
@@ -37,6 +38,14 @@
       <input type="hidden" name="filter" value="{{filters}}"></input>
     </form>
     
+    <form 
+      is="iron-form"
+      id="cartForm"
+      action="../src/addToCart.php">
+      
+      <input type="hidden" name="item" value="{{cartTemp}}"/>
+    </form>
+    
     <template is="dom-if" if="{{loggedIn}}">
       <cart-control visible="{{cartOpen}}"></cart-control>
     </template>
@@ -46,7 +55,7 @@
     <paper-drawer-panel id="drawer">
       <paper-header-panel drawer>
         <paper-toolbar>
-          <div class="title">Menu</div>
+          <div class="title">Simple Store</div>
         </paper-toolbar>
         <div class="layout vertical center-justified">
           
@@ -58,17 +67,26 @@
             </paper-item-body>
           </paper-icon-item>
           
+          <template is="dom-if" if="{{loggedIn}}">
+            <paper-icon-item on-tap="showCart">
+              <iron-icon icon="shopping-cart" item-icon></iron-icon>
+              <paper-item-body two-line>
+                <div>Cart</div>
+                <div secondary>{{cartSize}}</div>
+              </paper-item-body>
+            </paper-icon-item>
+          </template>
+          
           <register-card id="register"></register-card>
           <search-card></search-card>
-          <filter-card filter="{{filters}}"></filter-card>
+          <filter-card filter="{{filters::input}}"></filter-card>
         </div>
       </paper-header-panel>
       <paper-header-panel main>
         <paper-toolbar>
           <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-          <div class="title">Simple Store</div>
           
-          <paper-tabs id="tabs" class="end-justified" selected="{{activeTab}}">
+          <paper-tabs id="tabs" class="bottom self-end" selected="{{activeTab}}">
               <paper-tab>BROWSE</paper-tab>
               <template is="dom-if" if="{{isAdmin}}">
                 <paper-tab>INVENTORY</paper-tab>
@@ -78,22 +96,17 @@
               </template>
           </paper-tabs>
           
-          <template is="dom-if" if="{{loggedIn}}">
-            <paper-icon-button on-tap="showCart" icon="shopping-cart"></paper-icon-button>
-          </template>
-          
         </paper-toolbar>
         
         <div class="content">
         <iron-pages selected="{{activeTab}}">
-          <!--<div>
-            <item-tray stale="{{reloadItems}}" filterList="{{filters}}"></item-tray>
-          </div>-->
+          
           <div class="layout horizontal center-justified wrap">
             <template is="dom-repeat" items="{{products}}">
               <item-card on-add-to-cart="addItemToCart" data="{{item}}"></item-card>
             </template>
           </div>
+          
           <template id="invTemplate" is="dom-if" if="{{isAdmin}}">
             <div>
               <inventory-card on-stale-product="updateProducts"></inventory-card>
@@ -128,9 +141,17 @@
           type: Array,
           notify: true
         },
+        cartTemp: {
+          type: Number,
+          notify: true
+        },
         cartOpen: {
           type: Boolean,
           value: false,
+          notify: true
+        },
+        cartSize: {
+          type: Number,
           notify: true
         },
         isStaff: {
@@ -170,7 +191,8 @@
         'login.login-changed': 'setLogin',
         'login.register': 'showRegisterCard',
         'register.register-success': 'showLoginCard',
-        'productForm.iron-form-response': 'onUpdateResponse'
+        'productForm.iron-form-response': 'onUpdateResponse',
+        'cartForm.iron-form-response': 'onCartAddResponse'
       },
       ready: function() {
         this.loginLabel = "Login";
@@ -185,11 +207,14 @@
           this.isManager = e.detail.isManager;
           this.loginLabel = e.detail.loginLabel;
           this.loginLevel = e.detail.loginLevel;
+          this.cartSize = e.detail.cartSize;
+          this.$.tabs.notifyResize();
         } else {
           this.isStaff = false;
           this.isManager = false;
           this.$.tabs.select(0);
           this.loginLabel = "Login";
+          this.$.tabs.notifyResize();
         }
       },
       showRegisterCard: function() {
@@ -220,6 +245,31 @@
       },
       showCart: function() {
         this.cartOpen = true;
+      },
+      addItemToCart: function(e) {
+        if( this.loggedIn && e.detail && e.detail.pid ){
+          this.cartTemp = e.detail.pid;
+          
+          this.$.cartForm.submit();
+        } else {
+          console.log("error adding to cart");
+        }
+      },
+      onCartAddResponse: function(e) {
+        if( e.detail.response && e.detail.response.result ) {
+          if(e.detail.response.result == "success") {
+            
+            this.cartSize = e.detail.response.cartSize;
+            
+            //this.toastText = "";
+            //this.$.messageToast
+            console.log("added item to cart", e.detail.response);
+          } else {
+            console.log("app-shell - couldnt add item to cart:", e.detail.response.result);
+          }
+        } else {
+          console.log("app-shell - no response on product update");
+        }
       }
     });
   </script>

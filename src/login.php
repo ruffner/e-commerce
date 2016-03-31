@@ -35,7 +35,7 @@ $user = $BLANK_USER;
 $user['uname'] = $_POST['uname'];
 $user['email'] = $res[0]['email'];
 
-$cid = $res[0]['cid'];
+$cid = $_SESSION['db']->quote($res[0]['cid']);
 
 // decide staff status
 
@@ -60,7 +60,13 @@ if( count($res) > 0 ) {
     $user['isManager'] = False;
 }
 
+$sql = "SELECT SUM(quantity) AS s FROM Orders WHERE status='cart' AND cid=".$cid;
+$cartsize = $_SESSION['db']->select($sql);
+
+$user['cartSize'] = $cartsize[0]['s'];
+
 $_SESSION['user'] = $user;
+$_SESSION['cid'] = $cid;
 
 echo json_encode( Array(
      "result" => LOGIN_SUCCESS,

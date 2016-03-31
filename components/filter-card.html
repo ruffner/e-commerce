@@ -22,11 +22,10 @@
           <iron-icon icon="filter-list" item-icon></iron-icon>
           Filter
         </paper-icon-item>
-        <paper-menu id="filterMenu" class="menu-content sublist" multi attr-for-selected="label">
-          <paper-item label="Toys">Toys</paper-item>
-          <paper-item label="Games">Games</paper-item>
-          <paper-item label="Fun Stuff">Fun Stuff</paper-item>
-          <paper-item label="The Good Stuff">The Good Stuff</paper-item>
+        <paper-menu id="filterMenu" class="menu-content sublist" multi attr-for-selected="name">
+          <paper-item name="bowl">Bowls</paper-item>
+          <paper-item name="mushroom">Mushrooms</paper-item>
+          <paper-item name="top">Tops</paper-item>
         </paper-menu>
       </paper-submenu>
     </paper-menu>
@@ -38,7 +37,8 @@
       properties: {
         filter: {
           type: Array,
-          notify: true
+          notify: true,
+          reflectToAttribute: true
         }
       },
       listeners: {

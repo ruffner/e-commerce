@@ -140,6 +140,8 @@
         return v ? "Logout" : "Login";
       },
       fireLogin: function(e) {
+        console.log("cartsize: ", e.user.cartSize);
+        
         this.loggedIn = e.loggedIn;
         if(this.loggedIn) {
           this.fire('login-changed', {
@@ -147,7 +149,8 @@
             "isStaff": e.user.isStaff, 
             "isManager": e.user.isManager,
             "loginLabel": this.loginLabel,
-            "loginLevel": this.loginLevel
+            "loginLevel": this.loginLevel,
+            "cartSize": e.user.cartSize
           });
         } else {
           this.fire('login-changed', {
