@@ -14,9 +14,9 @@ require 'connect.php';
 $filter = json_decode($_GET['filter']);
 
 if( count($filter) == 0 || $filter[0] == "" ) {
-    $sql = "SELECT pname,ptype,cost,discount,quantity FROM Item";
+    $sql = "SELECT pid,pname,ptype,cost,discount,quantity FROM Item";
 } else {
-    $sql = "SELECT pname,ptype,cost,discount,quantity FROM Item WHERE ptype IN ('" . implode("','", $filter) . "')";
+    $sql = "SELECT pid,pname,ptype,cost,discount,quantity FROM Item WHERE ptype IN ('" . implode("','", $filter) . "')";
 }
 $res = $_SESSION['db']->select($sql);
 

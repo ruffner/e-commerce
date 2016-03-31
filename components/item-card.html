@@ -60,6 +60,9 @@
       },
       computePrice: function(cost, discount) {
         return (cost - cost*discount);
+      },
+      addToCart: function() {
+        this.fire('add-to-cart', {"pid": this.data.pid});
       }
     });
   </script>

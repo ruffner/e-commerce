@@ -17,14 +17,6 @@
     <style is="custom-style">
     </style>
     
-    <paper-icon-item on-tap="authAction">
-      <iron-icon icon="account-circle" item-icon></iron-icon>
-      <paper-item-body two-line>
-        <div>{{loginLabel}}</div>
-        <div secondary>{{loginLevel}}</div>
-      </paper-item-body>
-    </paper-icon-item>
-    
     <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
       <h2>Login</h2>
       <div>
@@ -52,9 +44,10 @@
       is: "login-card",
       properties: {
         visible: {
-            type: Boolean,
+          type: Boolean,
           default: false,
-          notifies: true
+          notifies: true,
+          reflectToAttribute: true
         },
         registerVisible: {
           type: Boolean,
@@ -71,7 +64,11 @@
           value: "Login",
           computed: 'computeLoginLabel(loggedIn)'
         },
-        loginLevel: String,
+        loginLevel: {
+          type: String,
+          value: "",
+          notify: true
+        },
         message: String
       },
       listeners: {
@@ -148,7 +145,9 @@
           this.fire('login-changed', {
             "loggedIn": e.loggedIn, 
             "isStaff": e.user.isStaff, 
-            "isManager": e.user.isManager
+            "isManager": e.user.isManager,
+            "loginLabel": this.loginLabel,
+            "loginLevel": this.loginLevel
           });
         } else {
           this.fire('login-changed', {

@@ -16,13 +16,13 @@
       }
     </style>
     
-    <paper-icon-button on-tap="show" icon="shopping-cart"></paper-icon-button>
-    
     <paper-dialog modal id="dialog" opened="{{visible}}" class="layout vertical">
       <h2>Shopping Cart</h2>
       
+      
+      
       <div class="buttons">
-        <paper-button raised on-tap="close">Close</paper-button>
+        <paper-button raised dialog-dismiss>Done</paper-button>
       </div>
     </paper-dialog>
     
@@ -35,14 +35,9 @@
         visible: {
           type: Boolean,
           default: false,
-          notify: true
+          notify: true,
+          reflectToAttribute: true
         }
-      },
-      show: function() {
-        this.visible = true;
-      },
-      close: function() {
-        this.visible = false;
       }
     });
   </script>
