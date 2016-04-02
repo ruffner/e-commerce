@@ -1,24 +1,67 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <dom-module id="cart-control">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      .item {
+        width: 300px;
+        margin: 10px;
+        padding: 10px;
+      }
     </style>
     
     <style is="custom-style">
-      #search {
-        margin-left: 20px;
-        margin-right: 20px;
+      .qBox {
+        width: 50px;
       }
     </style>
+    
+    <form is="iron-form"
+      id="uncartItemForm"
+      method="post"
+      action="../src/removeFromCart.php">
+      <input type="hidden" name="pid" value="{{itemToRemove}}"></input>
+    </form>
     
     <paper-dialog modal id="dialog" opened="{{visible}}" class="layout vertical">
       <h2>Shopping Cart</h2>
       
+      <div class="layout horizontal wrap">
+        <template id="itemTemplate" is="dom-repeat" items="{{cart}}">
+          
+          <paper-material class="item">
+            <div class="layout horizontal center">
+              <div class="layout vertical">
+                <span class="itemTitle">{{item.pname}}</span>
+                <span class="totalItemCost">${{item.totalCost}}</span>
+              </div>
+              <div class="flex"></div>
+              
+              <paper-input 
+                  id="quantity"
+                  label="Quantity"
+                  type="number"
+                  value="{{item.quantity}}"
+                  class="qBox"
+                  on-change="onQuantityChange"
+                  always-float-label>
+                </paper-input>
+              
+              <div class="layout vertical center-center">
+                <paper-icon-button icon="{{item.icon}}" on-tap="itemAction"></paper-icon-button>
+              </div>
+            </div>
+          </paper-material>
+
+        </template>
+      </div>
       
       
       <div class="buttons">
@@ -37,7 +80,33 @@
           default: false,
           notify: true,
           reflectToAttribute: true
+        },
+        cart: {
+          type: Array,
+          notify: true
+        },
+        itemToRemove: {
+          type: Number,
+          notify: true
         }
+      },
+      itemAction: function(e) {
+        var model = this.$.itemTemplate.modelForElement(e.target)
+        var pid = model.get('item.pid');
+
+        if( model.get('item.icon') == 'check' ) {
+          console.log('saving new quantity');
+          model.set('item.icon', 'clear');
+        } else {
+          console.log('removing all items with pid=',pid," from the cart");
+        }
+      },
+      onQuantityChange: function(e) {
+        var model = e.model;
+        
+        model.set('item.icon', 'check');
+        
+        console.log(e);
       }
     });
   </script>

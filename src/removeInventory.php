@@ -23,10 +23,17 @@ if( isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == True) {
   
     $db->query($sql);
     
-    echo json_encode( Array(
-      "result" => $db->error(),
-      "message" => "tried to remove item"
-    ));
+    if( $db->error() == "") {
+      echo json_encode( Array(
+        "result" => "success",
+        "message" => "Removed item from inventory."
+      ));
+    } else {
+      echo json_encode( Array(
+        "result" => $db->error(),
+        "message" => "tried to remove item"
+      ));
+    }
   }
 }
 

@@ -63,10 +63,12 @@ if( count($res) > 0 ) {
 $sql = "SELECT SUM(quantity) AS s FROM Orders WHERE status='cart' AND cid=".$cid;
 $cartsize = $_SESSION['db']->select($sql);
 
-$user['cartSize'] = $cartsize[0]['s'];
-
 $_SESSION['user'] = $user;
 $_SESSION['cid'] = $cid;
+
+$cart = getCartInfo();
+$user['cartSize'] = $cart['cartSize'];
+$user['cart'] = $cart['cart'];
 
 echo json_encode( Array(
      "result" => LOGIN_SUCCESS,

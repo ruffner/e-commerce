@@ -31,4 +31,33 @@ $BLANK_USER = Array(
 	"isManager" => False
 );
 
+function getCartInfo() {
+	$db = $_SESSION['db'];
+	
+	$cartSql = "SELECT Item.pname,Item.cost,Item.discount,Orders.pid,Orders.quantity FROM Orders INNER JOIN Item ON Orders.pid = Item.pid WHERE Orders.status='cart' AND cid=".$_SESSION['cid'];
+	
+	$cart = $db->select($cartSql);
+	
+	if( $db->error() != "" ) {
+		return Array("cart" => $db->error(), "cartSize" => NULL);
+		exit;
+	}
+	
+	$tqSql = "SELECT SUM(quantity) AS s FROM Orders WHERE status='cart' AND cid=".$_SESSION['cid'];
+	$cartSize = $db->select($tqSql);
+	
+	for( $i=0; $i<count($cart); $i=$i+1 ) {
+		$cart[$i]['icon'] = 'clear';
+		$cart[$i]['totalCost'] = $cart[$i]['quantity'] * ($cart[$i]['cost'] - $cart[$i]['cost'] * $cart[$i]['discount']);
+	}
+	
+	if( $db->error() == "" ) {
+		return Array("cart" => $cart, "cartSize" => $cartSize[0]['s']);
+	} else {
+		return Array("cart" => $db->error(), "cartSize" => NULL);
+	}
+	
+	exit;
+}
+
 ?>

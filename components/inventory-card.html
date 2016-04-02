@@ -249,7 +249,7 @@
       },
       removeItem: function(e) {
         this.deletedItems.push(e.model.get('item'));
-        this.splice('inventory', e.model.get('item.index'), 1);
+        //this.splice('inventory', e.model.get('item.index'), 1);
 
         this.itemToDelete = e.model.get('item.pid');
         this.$.removeInventoryForm.submit();
@@ -324,7 +324,21 @@
       onRemoveResponse: function(e) {
         console.log("product removal response:", e.detail.response);
         
-        this.fireInventoryChange();
+        if( e.detail.response && e.detail.response.result ) {
+          if(e.detail.response.result == "success") {
+            this.toastMessage = e.detail.response.message;
+            this.$.toast.open();
+
+            this.fireInventoryChange();
+            this.reloadItems();
+          } else {
+            this.toastMessage = "Error: " + e.detail.response.result;
+            this.$.toast.open();
+          }
+        } else {
+          this.toastMessage = "Error contacting update page!";
+          this.$.toast.open();
+        }
       },
       fireInventoryChange: function() {
         this.staleProducts = true;

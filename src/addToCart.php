@@ -5,6 +5,7 @@ if( !isset($_GET['item']) ){
 	exit;
 }
 
+require 'defs.php';
 require 'connect.php';
 
 if( isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == True) {
@@ -17,25 +18,57 @@ if( isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == True) {
   $pid = $db->quote($item);
   $cid = $_SESSION['cid'];
   
+ 
   $sql = "SELECT SUM(quantity) AS s FROM Orders WHERE status='cart' AND cid=".$cid;
   $cartsize = $db->select($sql);
   $cartsize = $cartsize[0]['s'];
   
-  $sql = "INSERT INTO Orders (cid,pid,status,quantity) VALUES (".$cid.",".$pid.",'cart',1)";
-  $res = $db->query($sql);
+  $sql = "SELECT * FROM Orders WHERE status='cart' AND cid=".$cid." AND pid=".$pid;
+  $ep = $db->select($sql);
   
-  if( $db->error() == "" ) {
-    $cartsize = $cartsize + 1;
-    echo json_encode( Array(
-        "result" => "success",
-        "cartSize" => $cartsize
-    ));
+  if( count($ep) > 0 ) {
+    $sql = "UPDATE Orders SET quantity='".($ep[0]['quantity']+1)."' WHERE cid=".$cid." AND pid=".$pid;
+    $db->query($sql);
+    
+    if( $db->error() == "" ) {
+      $cart = getCartInfo();
+      $_SESSION['user']['cart'] = $cart['cart'];
+      $_SESSION['user']['cartSize'] = $cart['cartSize'];
+      
+      $cartsize = $cartsize + 1;
+      echo json_encode( Array(
+          "result" => "success",
+          "cartSize" => $cartsize,
+          "cart" => $_SESSION['user']['cart']
+      ));
+    } else {
+      echo json_encode( Array(
+          "result" => $db->error()
+      ));
+    }
+    exit;
   } else {
-    echo json_encode( Array(
-        "result" => $db->error()
-    ));
+    $sql = "INSERT INTO Orders (cid,pid,status,quantity) VALUES (".$cid.",".$pid.",'cart',1)";
+    $res = $db->query($sql);
+    
+    if( $db->error() == "" ) {
+      $cart = getCartInfo();
+      $_SESSION['user']['cart'] = $cart['cart'];
+      $_SESSION['user']['cartSize'] = $cart['cartSize'];
+      
+      $cartsize = $cartsize + 1;
+      echo json_encode( Array(
+          "result" => "success",
+          "cartSize" => $cartsize,
+          "cart" => $_SESSION['user']['cart']
+      ));
+    } else {
+      echo json_encode( Array(
+          "result" => $db->error()
+      ));
+    }
+    exit;
   }
-  exit;
 } else {
   echo json_encode( Array(
     "result" => ERR_NOT_LOGGED_IN

@@ -12,6 +12,7 @@
     
     <paper-dialog id="dialog" opened="{{visible}}" class="layout vertical" modal>
       <h2>Register</h2>
+      <span id="message">{{message}}</span>
       <div id="content">
 				<form is="iron-form" id="regForm" method="post" action="../src/register.php">
 					<paper-input name="email" label="Email"></paper-input>
@@ -35,6 +36,10 @@
 					type: Boolean,
 					default: false,
 					notifies: true
+				},
+				message: {
+					type: String,
+					notify: true
 				}
 			},
 			listeners: {
@@ -46,11 +51,11 @@
 			handleResponse(e) {
 				if( e.detail.response && e.detail.response.result ) {
 					if( e.detail.response.result == "success" ) {
-						this.$.content.innerHTML = "Successfully registered, you may now login.";
+						this.message = "Successfully registered, you may now login.";
 						this.async(this.close, 1000);
 						this.async(this.registerSuccess, 1100);
 					} else {
-						this.$.content.innerHTML = e.detail.response.result;
+						this.message = e.detail.response.result;
 					}
 				} else {
 					this.$.content.innerHTML = "Error while contacting registration page.";

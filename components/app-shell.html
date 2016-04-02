@@ -47,10 +47,11 @@
     </form>
     
     <template is="dom-if" if="{{loggedIn}}">
-      <cart-control visible="{{cartOpen}}"></cart-control>
+      <cart-control cart="{{cartItems}}" visible="{{cartOpen}}"></cart-control>
     </template>
     
     <login-card id="login"></login-card>
+    <register-card id="register"></register-card>
     
     <paper-drawer-panel id="drawer">
       <paper-header-panel drawer>
@@ -77,7 +78,6 @@
             </paper-icon-item>
           </template>
           
-          <register-card id="register"></register-card>
           <search-card></search-card>
           <filter-card filter="{{filters::input}}"></filter-card>
         </div>
@@ -154,6 +154,10 @@
           type: Number,
           notify: true
         },
+        cartItems: {
+          type: Array,
+          notify: true
+        },
         isStaff: {
           type: Boolean,
           default: false
@@ -207,6 +211,7 @@
           this.isManager = e.detail.isManager;
           this.loginLabel = e.detail.loginLabel;
           this.loginLevel = e.detail.loginLevel;
+          this.cartItems = e.detail.cart;
           this.cartSize = e.detail.cartSize;
           this.$.tabs.notifyResize();
         } else {
@@ -252,13 +257,14 @@
           
           this.$.cartForm.submit();
         } else {
-          console.log("error adding to cart");
+          this.$.register.visible = true;
         }
       },
       onCartAddResponse: function(e) {
         if( e.detail.response && e.detail.response.result ) {
           if(e.detail.response.result == "success") {
-            
+            this.cartTemp = null;
+            this.cartItems = e.detail.response.cart;
             this.cartSize = e.detail.response.cartSize;
             
             //this.toastText = "";
@@ -268,7 +274,7 @@
             console.log("app-shell - couldnt add item to cart:", e.detail.response.result);
           }
         } else {
-          console.log("app-shell - no response on product update");
+          console.log("app-shell -no response on cart add");
         }
       }
     });
