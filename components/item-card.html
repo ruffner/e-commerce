@@ -15,11 +15,28 @@
       .square {
         margin: 15px;
         width: 234px;
-        height: 234px;
+        height: 300px;
       }
       paper-button {
         margin: 10px;
+        --paper-button: {
+          background: #4DB6AC;
+          color: black;
+        }
       }
+      paper-icon-item {
+        --paper-icon-item: {
+          background: #00796B;
+          color: white;
+        }
+      }
+      paper-item-body {
+        --paper-item-body-secondary-color: white;
+      }
+      /*
+      paper-material {
+        background: #C8E6C9;
+      }*/
     </style>
     
     <paper-material z="1" class="square layout vertical center-justified">
@@ -29,9 +46,12 @@
           <div>{{data.pname}}</div>
           <div secondary>{{data.ptype}}</div>
         </paper-item-body>
+        <div suffix>
+          {{data.quantity}}
+        </div>
       </paper-icon-item>
       
-      <iron-image src="{{data.image}}" class="flex"></iron-image>
+      <iron-image src="{{data.image}}" sizing="contain" class="flex"></iron-image>
       
       <div class="layout horizontal center">
         <paper-button class="flex" raised icon="add-shopping-cart" on-tap="addToCart">

@@ -6,7 +6,7 @@ class NeatDB {
 
   public function connect() {
     if(!isset(self::$connection)) {
-      self::$connection = new mysqli('localhost','','','Commerce');
+      self::$connection = new mysqli('localhost','root','','c9');
     }
 
     if(self::$connection === false) {

@@ -14,7 +14,7 @@ require 'connect.php';
 $filter = json_decode($_GET['filter']);
 
 if( count($filter) == 0 || $filter[0] == "" ) {
-    $sql = "SELECT pid,pname,ptype,cost,discount,quantity FROM Item";
+    $sql = "SELECT pid,pname,ptype,cost,discount,quantity,image FROM Item";
 } else {
     $sql = "SELECT pid,pname,ptype,cost,discount,quantity,image FROM Item WHERE ptype IN ('" . implode("','", $filter) . "')";
 }

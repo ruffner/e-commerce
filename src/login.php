@@ -60,15 +60,13 @@ if( count($res) > 0 ) {
     $user['isManager'] = False;
 }
 
-$sql = "SELECT SUM(quantity) AS s FROM Orders WHERE status='cart' AND cid=".$cid;
-$cartsize = $_SESSION['db']->select($sql);
-
-$_SESSION['user'] = $user;
 $_SESSION['cid'] = $cid;
 
 $cart = getCartInfo();
 $user['cartSize'] = $cart['cartSize'];
 $user['cart'] = $cart['cart'];
+
+$_SESSION['user'] = $user;
 
 echo json_encode( Array(
      "result" => LOGIN_SUCCESS,
