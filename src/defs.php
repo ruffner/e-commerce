@@ -52,7 +52,11 @@ function getCartInfo() {
 	}
 	
 	if( $db->error() == "" ) {
-		return Array("cart" => $cart, "cartSize" => $cartSize[0]['s']);
+		if( count($cart) > 0 ){
+			return Array("cart" => $cart, "cartSize" => $cartSize[0]['s']);
+		} else {
+			return Array("cart" => $cart, "cartSize" => 0);
+		}
 	} else {
 		return Array("cart" => $db->error(), "cartSize" => NULL);
 	}

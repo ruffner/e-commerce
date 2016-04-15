@@ -37,8 +37,6 @@
       id="productForm"
       content-type="application/json"
       action="../src/products.php">
-      
-      <input type="hidden" name="filter" value="{{filters}}"></input>
     </form>
     
     <form 
@@ -50,7 +48,7 @@
     </form>
     
     <template is="dom-if" if="{{loggedIn}}">
-      <cart-control cart="{{cartItems}}" visible="{{cartOpen}}"></cart-control>
+      <cart-control cart="{{cartItems}}" visible="{{cartOpen}}" on-cart-resize="onCartResize"></cart-control>
     </template>
     
     <login-card id="login"></login-card>
@@ -105,7 +103,7 @@
         <iron-pages selected="{{activeTab}}">
           
           <div class="layout horizontal center-justified wrap">
-            <template is="dom-repeat" items="{{products}}">
+            <template is="dom-repeat" items="{{products}}" filter="{{computeFilter(filterString)}}">
               <item-card on-add-to-cart="addItemToCart" data="{{item}}"></item-card>
             </template>
           </div>
@@ -284,6 +282,35 @@
       onDrawerChange: function(e) {
         if( e.detail.narrow ) {
           
+        }
+      },
+      onCartResize: function(e) {
+        if( e.detail ){
+          this.cartSize = e.detail.cartSize;
+        }
+      },
+      computeFilterString: function(filters) {
+        console.log("filter");
+        var s = "";
+        if( !filters || filters.length == 0 ) return s;
+        for( var i=0; i<filters.length; i++ ){
+          s += filters[i];
+          if( i < filters.length - 1 )
+            s += ' ';
+        }
+        console.log("filterString: ", s);
+        return s;
+      },
+      computeFilter: function(str) {
+        if( !str )
+          return null;
+        else {
+          str = str.toLowerCase();
+          return function(item) {
+            console.log("pname: ", item.pname);
+            //console.log("str: ", str);
+            return (str.indexOf(item.ptype.toLowerCase()) != -1);
+          };
         }
       }
     });

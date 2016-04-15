@@ -30,6 +30,13 @@
       <input type="hidden" name="pid" value="{{itemToRemove}}"></input>
     </form>
     
+    <form is="iron-form"
+      id="placeOrderForm"
+      method="post"
+      action="../src/placeOrder.php">
+      <input type="hidden" name="placeOrder" value="place"></input>
+    </form>
+    
     <paper-dialog modal id="dialog" opened="{{visible}}" class="layout vertical">
       <h2>Shopping Cart</h2>
       
@@ -63,8 +70,11 @@
         </template>
       </div>
       
+      <div class="layout horizontal center-center" id="statusBar"></div>
       
       <div class="buttons">
+        <paper-button raised id="placeOrderButton" hidden$="{{zeroCart}}" on-tap="placeOrder">Place Order</paper-button>
+        <div class="flex"></div>
         <paper-button raised dialog-dismiss>Done</paper-button>
       </div>
     </paper-dialog>
@@ -88,7 +98,15 @@
         itemToRemove: {
           type: Number,
           notify: true
+        },
+        zeroCart: {
+          type: Boolean,
+          computed: 'isCartEmpty(cart)'
         }
+      },
+      listeners: {
+        'uncartItemForm.iron-form-response': 'onRemoveResponse',
+        'placeOrderForm.iron-form-response': 'onPlaceOrderResponse'
       },
       itemAction: function(e) {
         var model = this.$.itemTemplate.modelForElement(e.target)
@@ -99,6 +117,8 @@
           model.set('item.icon', 'clear');
         } else {
           console.log('removing all items with pid=',pid," from the cart");
+          this.itemToRemove = pid;
+          this.$.uncartItemForm.submit();
         }
       },
       onQuantityChange: function(e) {
@@ -107,6 +127,34 @@
         model.set('item.icon', 'check');
         
         console.log(e);
+      },
+      onRemoveResponse: function(e) {
+        if(e.detail.response && e.detail.response.result) {
+          console.log("new cart: ", e.detail.response.cart);
+          
+          if( this.cart && this.cart.length > e.detail.response.cartSize ){
+            this.fire('cart-resize', {cartSize: e.detail.response.cartSize});
+          }
+          
+          this.cart = e.detail.response.cart;
+        } 
+      },
+      placeOrder: function(e) {
+        console.log("submitting");
+        this.$.placeOrderForm.submit();
+      },
+      onPlaceOrderResponse: function(e) {
+        if(e.detail.response && e.detail.response.result) {
+          console.log("placeOrder response ", e.detail.response);
+          
+          this.cart = e.detail.response.cart;
+          this.fire('cart-resize', {cartSize: e.detail.response.cartSize});
+        }
+      },
+      isCartEmpty: function(c) {
+        if(c)
+          return (c.length == 0);
+        return false;
       }
     });
   </script>
