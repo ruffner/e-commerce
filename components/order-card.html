@@ -1,0 +1,238 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="order-card">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .larger {
+        background-color: #ddd;
+        font-size: 18px;
+        padding: 15px;
+      }
+      .indent {
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-top: 10px;
+      }
+      .bottomBar {
+        padding: 15px;
+      }
+      .heading {
+        font-size: 17px;
+        font-weight: bold;
+        border-bottom: 1px dashed #ddd;
+        margin-bottom: 5px;
+      }
+    </style>
+    <style is="custom-style">
+      paper-material {
+        margin: 20px;
+      }
+    </style>
+    
+    <form is="iron-form"
+      id="orderForm"
+      method="post"
+      action="../src/getOrders.php">
+      <input type="hidden" name="getOrders" value="all"></input>
+    </form>
+    
+    <form is="iron-form"
+      id="shipOrderForm"
+      method="post"
+      action="../src/placeOrder.php">
+      <input type="hidden" name="placeOrder" value="ship"></input>
+      <input type="hidden" name="cid" value="{{cidToShip}}"></input>
+      <input type="hidden" name="odate" value="{{dateToShip}}"></input>
+    </form>
+    
+    <!-- iterate over every date -->
+    <template is="dom-repeat" items="{{groupedOrders}}">
+      
+      <!--iterate over items in that date's order -->
+      <paper-material elevation="2" class="layout vertical">
+        
+        <template is="dom-if" if="{{isAdmin}}">
+          <div class="larger layout horizontal">
+            <div>User: {{item.uname}}</div>
+            <div class="flex"></div>
+            <div>Email: {{item.email}}</div>
+          </div>
+        </template>
+        
+        <div class="larger layout horizontal">
+          <div>Last Activity: {{item.odate}}</div>
+          <div class="flex"></div>
+          <div>Status: {{item.status}}</div>
+        </div>
+        
+        <div class="heading layout horizontal justified indent">
+          <div>Item Name</div>
+          <div>Quantity</div>
+          <div>Price</div>
+        </div>
+        
+        <template is="dom-repeat" items="{{item.items}}">
+          <div class="layout horizontal around justified indent">
+            <div>{{item.pname}}</div>
+            <div>x{{item.quantity}}</div>
+            <div>${{item.price}}</div>
+          </div>
+        </template>
+        
+        <div class="bottomBar layout horizontal center">
+          <template is="dom-if" if="{{isAdmin}}">
+            <paper-button raised on-tap="shipOrder" hidden$="{{!item.pending}}">SHIP IT</paper-button>
+          </template>
+          
+          <div class="flex"></div>
+          <div>Total: ${{item.total}}</div>
+        </div>
+      </paper-material>
+      
+    </template>
+      
+      
+    
+    
+    
+  </template>
+  
+  <script>
+    Polymer({
+      is: "order-card",
+      properties: {
+        orders: {
+          type: Array,
+          notify: true
+        },
+        groupedOrders: {
+          type: Array,
+          computed: 'computeOrders(orders)'
+        },
+        isAdmin: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        cidToShip: {
+          type: Number,
+          notify: true
+        },
+        dateToShip: {
+          type: String,
+          notify: true
+        }
+      },
+      listeners: {
+        'orderForm.iron-form-response': 'onReceiveOrders',
+        'shipOrderForm.iron-form-response': 'onShipResponse'
+      },
+      ready: function() {
+        this.$.orderForm.submit();
+      },
+      onReceiveOrders: function(e) {
+        console.log("receiver");
+        if(e.detail.response && e.detail.response.result) {
+          
+          if( e.detail.response.result == "success" ){
+            this.orders = e.detail.response.orders;
+            this.isAdmin = e.detail.response.isAdmin;
+            
+          }
+          console.log("orders: ", e.detail.response)
+        } 
+      },
+      shipOrder: function(e) {
+        var model = e.model;
+        
+        this.cidToShip = model.get('item.cid');
+        this.dateToShip = model.get('item.odate');
+        console.log("ship", this.cidToShip, this.dateToShip);
+        this.$.shipOrderForm.submit();
+        
+        
+      },
+      onShipResponse: function(e) {
+        if(e.detail.response && e.detail.response.result) {
+          
+          if( e.detail.response.result == "success" ){
+            console.log("response", e.detail.response);
+            this.$.orderForm.submit();
+          }
+          
+        } 
+      },
+      computeOrders: function(o) {
+        
+        // group entries by their order date
+        var g = [];
+        
+        // if we have orders to show
+        if(o && o.length ){
+          var time = '';
+          var total = 0;
+          // go through each order
+          for( var i=0; i<o.length; i++ ){
+            
+            // adjust price
+            o[i].price = o[i].price * o[i].quantity;
+            
+            // if this is a new odate group
+            if( time != o[i].odate ){
+              
+              // new group but not first group
+              // assign total thusfar
+              if(total)
+                g[g.length-1].total = total;
+                
+              total = o[i].price;
+              
+              // push a new model, representing one order card
+              // each item in the items list gets iterated over by
+              // the inner template 
+              g.push({
+                odate: o[i].odate, 
+                cid: o[i].cid,
+                items: [ o[i] ],
+                status: o[i].status,
+                pending: (o[i].status == "pending"),
+                total: total,
+                uname: o[i].uname,
+                email: o[i].email
+              });
+              
+              time = o[i].odate
+            } 
+            // an item from the same order 
+            else {
+              // add it to the most recent items array
+              g[g.length-1].items.push( o[i] );
+              
+              // add its price to the total
+              total += o[i].price;
+              
+              // assign the last total since loop wont
+              // go agin
+              if( i == o.length-1 )
+                g[g.length-1].total = total;
+            }
+          }
+
+          return g;
+        } else {
+          console.log("empty order set");
+        }
+      }
+    })
+    
+  </script>
+</dom-module>

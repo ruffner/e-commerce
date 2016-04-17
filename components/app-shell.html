@@ -92,7 +92,7 @@
               <template is="dom-if" if="{{isAdmin}}">
                 <paper-tab>INVENTORY</paper-tab>
               </template>
-              <template is="dom-if" if="{{isAdmin}}">
+              <template is="dom-if" if="{{loggedIn}}">
                 <paper-tab>ORDERS</paper-tab>
               </template>
           </paper-tabs>
@@ -112,6 +112,9 @@
             <div>
               <inventory-card on-stale-product="updateProducts"></inventory-card>
             </div>
+          </template>
+          
+          <template id="ordTemplate" is="dom-if" if="{{loggedIn}}">
             <div>
               <order-card></order-card>
             </div>

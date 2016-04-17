@@ -145,6 +145,9 @@
       },
       onPlaceOrderResponse: function(e) {
         if(e.detail.response && e.detail.response.result) {
+          
+          // check for success and display colored message in this.$.statusBar
+          
           console.log("placeOrder response ", e.detail.response);
           
           this.cart = e.detail.response.cart;
