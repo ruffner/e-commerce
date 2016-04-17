@@ -46,17 +46,23 @@ CREATE TABLE Item (
   CHECK (quantity >=0)
 ) ENGINE=INNODB;
 
-CREATE TRIGGER discountTrig
-AFTER UPDATE OF discount ON Item
-REFERENCING NEW ROW AS n, OLD ROW AS o
-WHEN (discount >=1 OR discount <0)
-SET n.discount=o.discount;
+CREATE TRIGGER discountTrig AFTER UPDATE ON Item
+FOR EACH ROW
+BEGIN
+	IF NEW.discount < 0 THEN
+		SET NEW.discount=OLD.discount;
+	ELSEIF NEW.discount>1 THEN
+		SET NEW.discount = OLD.discount;
+	END IF;
+END;//
 
-CREATE TRIGGER itemQuantityTrig
-AFTER UPDATE OF quantity ON Iteam
-REFERECING NEW ROW AS n
-WHEN (n.quantity < 0)
-SET n.quantity=0;
+CREATE TRIGGER itemQuantityTrig AFTER UPDATE ON Iteam
+FOR EACH ROW
+BEGIN
+	IF NEW.quantity < 0 THEN
+		SET n.quantity=0;
+	END IF;
+END;//
 
 CREATE TABLE Orders (
   cid INTEGER NOT NULL,
@@ -72,14 +78,18 @@ CREATE TABLE Orders (
   CHECK (quantity > 0)
 ) ENGINE=INNODB;
 
-CREATE TRIGGER statusTrig
-AFTER UPDATE OF status ON Orders
-REFERENCING NEW ROW AS n, OLD ROW AS o
-WHEN NOT (n.status="cart" OR n.status="pending" OR n.status="shipped")
-SET n.status=o.status;
+CREATE TRIGGER statusTrig AFTER UPDATE ON Orders
+FOR EACH ROW
+BEGIN
+	IF NOT (NEW.status="cart" OR NEW.status="pending" OR NEW.status="shipped") THEN
+		SET NEW.status=OLD.status;
+	END IF;
+END;//
 
-CREATE TRIGGER quantityTrig
-AFTER UPDATE OF quantity ON Orders
-REFERENCING NEW ROW AS n
-WHEN (n.quantity <0)
-SET n.quantity=0;
+CREATE TRIGGER quantityTrig AFTER UPDATE ON Orders
+FOR EACH ROW
+BEGIN
+	IF n.quantity <0 THEN
+		SET n.quantity=0;
+	END IF;
+END;//
