@@ -32,7 +32,6 @@ CREATE TABLE Item (
   image VARCHAR(100),
   info VARCHAR(1000),
   PRIMARY KEY(pid),
-  CHECK ((ptype IN (SELECT name FROM Types)) AND (psubtype IN (SELECT subtype FROM Types))),
   CHECK (cost > 0),
   CHECK (discount < 1 AND discount >=0),
   CHECK (quantity >=0)
