@@ -14,8 +14,7 @@
     <style is="custom-style">
       .square {
         margin: 15px;
-        width: 234px;
-        height: 300px;
+        width: 300px;
       }
       paper-button {
         margin: 10px;
@@ -51,7 +50,7 @@
         </div>
       </paper-icon-item>
       
-      <iron-image src="{{data.image}}" sizing="contain" class="flex"></iron-image>
+      <iron-image style="height:250px;" src="{{data.image}}" sizing="cover"></iron-image>
       
       <div class="layout horizontal center">
         <paper-button class="flex" raised icon="add-shopping-cart" on-tap="addToCart">

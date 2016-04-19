@@ -137,6 +137,7 @@
         staleOrders: {
           type: Boolean,
           notify: true,
+          reflectToAttribute: true,
           observer: 'onStaleOrders'
         },
         statusMessage: {

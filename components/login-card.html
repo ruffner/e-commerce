@@ -108,8 +108,8 @@
             this.message = "Login successful!";
             this.$.message.style.color = "green";
             
-            this.async(this.close, 1000);
-            this.async(this.resetFields, 1000);
+            this.async(this.close, 700);
+            this.async(this.resetFields, 700);
           } else if( e.detail.response.result == "logout" ) {
             this.fire('login-changed', {"loggedIn": false});
             
