@@ -3,6 +3,10 @@
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-menu/paper-submenu.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/paper-badge/paper-badge.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -14,8 +18,6 @@
 <link rel="import" href="register-card.html">
 <link rel="import" href="order-card.html">
 <link rel="import" href="cart-control.html">
-<link rel="import" href="filter-card.html">
-<link rel="import" href="search-card.html">
 <link rel="import" href="login-card.html">
 <link rel="import" href="item-card.html">
 <link rel="import" href="stats-card.html">
@@ -79,9 +81,9 @@
               </paper-item-body>
             </paper-icon-item>
           </template>
-          
-          <search-card></search-card>
-          <filter-card filter="{{filters::input}}"></filter-card>
+          <paper-input value="{{searchString::input}}" style="margin-right: 20px; margin-left: 20px;" label="Search" id="search">
+            <paper-icon-button suffix icon="search"></paper-icon-button>
+          </paper-input>
         </div>
       </paper-header-panel>
       <paper-header-panel main>
@@ -107,7 +109,7 @@
         <iron-pages selected="{{activeTab}}">
           
           <div class="layout horizontal center-justified wrap">
-            <template is="dom-repeat" items="{{products}}" filter="{{computeFilter(filterString)}}">
+            <template is="dom-repeat" items="{{products}}" filter="{{computeFilter(searchString)}}">
               <item-card on-add-to-cart="addItemToCart" data="{{item}}"></item-card>
             </template>
           </div>
@@ -223,6 +225,7 @@
       ready: function() {
         this.loginLabel = "Login";
         this.$.productForm.submit();
+        
       },
       setLogin: function(e) {
         console.log("login update:", e.detail);
@@ -310,32 +313,20 @@
           this.cartSize = e.detail.cartSize;
         }
       },
-      computeFilterString: function(filters) {
-        console.log("filter");
-        var s = "";
-        if( !filters || filters.length == 0 ) return s;
-        for( var i=0; i<filters.length; i++ ){
-          s += filters[i];
-          if( i < filters.length - 1 )
-            s += ' ';
-        }
-        console.log("filterString: ", s);
-        return s;
-      },
       computeFilter: function(str) {
-        if( !str )
-          return null;
-        else {
-          str = str.toLowerCase();
-          return function(item) {
-            console.log("pname: ", item.pname);
-            //console.log("str: ", str);
-            return (str.indexOf(item.ptype.toLowerCase()) != -1);
-          };
-        }
+        if( !str  ) return null;
+        
+        str = str.toLowerCase();
+        return function(item) {
+          return (str.indexOf(item.ptype.toLowerCase()) != -1);
+        };
+        
       },
       updateOrders: function(e) {
         this.needOrderUpdate = true;
+      },
+      filtersChanged: function(e) {
+        console.log("filter changed", e);
       }
     });
   </script>
