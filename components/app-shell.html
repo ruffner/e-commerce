@@ -236,6 +236,7 @@
           this.cartItems = e.detail.cart;
           this.cartSize = e.detail.cartSize;
           this.$.tabs.notifyResize();
+          this.needOrderUpdate = !this.needOrderUpdate;
         } else {
           this.isStaff = false;
           this.isManager = false;

@@ -30,7 +30,7 @@ if( isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == True) {
       echo json_encode( Array(
           "result" => "success",
           "orders" => $res,
-          "isAdmin" => ($_SESSION['user']['isStaff'] || $_SESSION['user']['isManager'])
+          "isAdmin" => 1
       ));
     }
     // query failed
@@ -57,7 +57,7 @@ if( isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == True) {
       echo json_encode( Array(
           "result" => "success",
           "orders" => $res,
-          "isAdmin" => ($_SESSION['user']['isStaff'] || $_SESSION['user']['isManager'])
+          "isAdmin" => 0
       ));
     }
     // query failed

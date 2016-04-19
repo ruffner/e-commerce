@@ -121,7 +121,6 @@
         },
         isAdmin: {
           type: Boolean,
-          value: false,
           notify: true
         },
         cidToShip: {
@@ -150,9 +149,6 @@
         'orderForm.iron-form-response': 'onReceiveOrders',
         'shipOrderForm.iron-form-response': 'onShipResponse'
       },
-      ready: function() {
-        this.updateOrders();
-      },
       updateOrders: function() {
         this.$.orderForm.submit();
       },
@@ -163,6 +159,7 @@
           if( e.detail.response.result == "success" ){
             this.orders = e.detail.response.orders;
             this.isAdmin = e.detail.response.isAdmin;
+            console.log("admin from orders: ", this.isAdmin);
             
           }
           console.log("orders: ", e.detail.response)
@@ -261,10 +258,8 @@
         }
       },
       onStaleOrders: function(stale) {
-        if( this.staleOrders ){
-          this.updateOrders();
-          this.staleOrders = false;
-        }
+        console.log("on stale orders", this.staleOrders);
+        this.updateOrders();
       }
     })
     
