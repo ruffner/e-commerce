@@ -37,7 +37,8 @@ CREATE TABLE Item (
   CHECK (quantity >=0)
 ) ENGINE=INNODB;
 
-CREATE TRIGGER discountTrig AFTER UPDATE ON Item
+DELIMITER //
+CREATE TRIGGER realCheck BEFORE UPDATE ON Item
 FOR EACH ROW
 BEGIN
 	IF NEW.discount < 0 THEN
@@ -45,15 +46,11 @@ BEGIN
 	ELSEIF NEW.discount>1 THEN
 		SET NEW.discount = OLD.discount;
 	END IF;
-END;//
-
-CREATE TRIGGER itemQuantityTrig AFTER UPDATE ON Item
-FOR EACH ROW
-BEGIN
 	IF NEW.quantity < 0 THEN
-		SET n.quantity=0;
+	  SET NEW.quantity = 0;
 	END IF;
 END;//
+DELIMITER ;
 
 CREATE TABLE Orders (
   cid INTEGER NOT NULL,
