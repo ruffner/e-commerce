@@ -4,6 +4,7 @@
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
@@ -93,7 +94,7 @@
             <paper-button raised on-tap="shipOrder" hidden$="{{!item.pending}}">SHIP IT</paper-button>
           </template>
           
-          <div class="flex"></div>
+          <div class="flex">{{item.statusMessage}}</div>
           <div>Total: ${{item.total}}</div>
         </div>
       </paper-material>
@@ -130,6 +131,19 @@
         dateToShip: {
           type: String,
           notify: true
+        },
+        shippedModel: {
+          type: Object
+        },
+        staleOrders: {
+          type: Boolean,
+          notify: true,
+          observer: 'onStaleOrders'
+        },
+        statusMessage: {
+          type: String,
+          notify: true,
+          value: ""
         }
       },
       listeners: {
@@ -137,6 +151,9 @@
         'shipOrderForm.iron-form-response': 'onShipResponse'
       },
       ready: function() {
+        this.updateOrders();
+      },
+      updateOrders: function() {
         this.$.orderForm.submit();
       },
       onReceiveOrders: function(e) {
@@ -153,6 +170,7 @@
       },
       shipOrder: function(e) {
         var model = e.model;
+        this.shippedModel = model;
         
         this.cidToShip = model.get('item.cid');
         this.dateToShip = model.get('item.odate');
@@ -162,14 +180,23 @@
         
       },
       onShipResponse: function(e) {
+        console.log("on ship response", e.detail.response);
         if(e.detail.response && e.detail.response.result) {
           
+          this.statusMessage = e.detail.response.message;
           if( e.detail.response.result == "success" ){
-            console.log("response", e.detail.response);
-            this.$.orderForm.submit();
+            this.updateOrders();
+          } else {
+            this.shippedModel.set('item.statusMessage', e.detail.response.message);
+            var that  = this;
+            this.async(function() {
+              that.shippedModel.set('item.statusMessage', '');
+              that.shippedModel = null;
+            }, 1000);
           }
-          
-        } 
+        } else {
+          console.log(e.detail.response);
+        }
       },
       computeOrders: function(o) {
         
@@ -204,6 +231,7 @@
                 cid: o[i].cid,
                 items: [ o[i] ],
                 status: o[i].status,
+                statusMessage: "",
                 pending: (o[i].status == "pending"),
                 total: total,
                 uname: o[i].uname,
@@ -230,6 +258,12 @@
           return g;
         } else {
           console.log("empty order set");
+        }
+      },
+      onStaleOrders: function(stale) {
+        if( this.staleOrders ){
+          this.updateOrders();
+          this.staleOrders = false;
         }
       }
     })

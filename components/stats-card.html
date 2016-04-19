@@ -1,0 +1,232 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+
+<dom-module id="stats-card">
+  <template>
+    <style  include="iron-flex iron-flex-alignment">
+      .section {
+        margin: 10px;
+      }
+      .header {
+        background: #ddd;
+        padding: 15px;
+      }
+    </style>
+    
+    <style is="custom-style">
+      .content {
+        padding: 20px;
+        padding-bottom: 0px;
+      }
+    </style>
+    
+    <form is="iron-form"
+      id="statsForm"
+      method="post"
+      action="../src/getStats.php">
+      <input type="hidden" name="onlyShipped" value="{{onlyShipped}}"></input>
+    </form>
+    
+    <div class="layout vertical">
+      <div class="layout horizontal center">
+        <paper-toggle-button checked="{{onlyShipped}}">Shipped Orders Only</paper-toggle-button>
+        <div class="flex"></div>
+      </div>
+      
+      <paper-material elevation="2" class="section layout vertical">
+        <div class="header layout vertical">
+          <div class="layout horizontal center">
+            <div class="layout vertical justified">
+              <div>Items Sold: {{itemsSoldWeek}}</div>
+              <div>Total Revenue: ${{totalWeekSales}}</div>
+              <div>Average Sale: ${{avgWeekSale}}</div>
+            </div>
+            <div class="flex"></div>
+            <div style="font-size: 20px;">Past Week</div>
+          </div>
+        </div>
+        <div class="content layout horizontal justified">
+          <div>Product Name</div>
+          <div>Cost</div>
+          <div>Order Date</div>
+          <div>Status</div>
+        </div>
+        
+        <div class="content">
+          <template is="dom-repeat" items="{{weekOrders}}">
+            <div class="layout horizontal justified">
+              <div>{{item.pname}}</div>
+              <div>${{item.price}}</div>
+              <div>{{item.odate}}</div>
+              <div>{{item.status}}</div>
+            </div>
+          </template>
+        </div>
+      </paper-material>
+      
+      <paper-material elevation="2" class="section layout vertical">
+        <div class="header layout vertical">
+          <div style="font-size: 20px;" class="layout horizontal center">
+            <div class="layout vertical">
+              <div>Items Sold: {{itemsSoldMonth}}</div>
+              <div>Total Revenue: ${{totalMonthSales}}</div>
+              <div>Average $/sale: ${{avgMonthSale}}</div>
+            </div>
+            <div class="flex"></div>
+            <div>Past Month</div>
+          </div>
+        </div>
+        <div class="content layout horizontal justified">
+          <div>Product Name</div>
+          <div>Cost</div>
+          <div>Order Date</div>
+          <div>Status</div>
+        </div>
+        
+        <div class="content">
+          <template is="dom-repeat" items="{{monthOrders}}">
+            <div class="layout horizontal justified">
+              <div>{{item.pname}}</div>
+              <div>${{item.price}}</div>
+              <div>{{item.odate}}</div>
+              <div>{{item.status}}</div>
+            </div>
+          </template>
+        </div>
+      </paper-material>
+      
+      <paper-material elevation="2" class="section layout vertical">
+        <div class="header layout vertical">
+          <div style="font-size: 20px;" class="layout horizontal center">
+            <div class="layout vertical">
+              <div>Items Sold: {{itemsSoldYear}}</div>
+              <div>Total Revenue: ${{totalYearSales}}</div>
+              <div>Average $/sale: ${{avgYearSale}}</div>
+            </div>
+            <div class="flex"></div>
+            <div>Past Year</div>
+          </div>
+        </div>
+        <div class="content layout horizontal justified">
+          <div>Product Name</div>
+          <div>Cost</div>
+          <div>Order Date</div>
+          <div>Status</div>
+        </div>
+        
+        <div class="content">
+          <template is="dom-repeat" items="{{yearOrders}}">
+            <div class="layout horizontal justified">
+              <div>{{item.pname}}</div>
+              <div>${{item.price}}</div>
+              <div>{{item.odate}}</div>
+              <div>{{item.status}}</div>
+            </div>
+          </template>
+        </div>
+      </paper-material>
+    </div>
+    
+      
+  </template>
+  <script>
+    Polymer(
+    {
+      is: "stats-card",
+      properties: {
+        onlyShipped: {
+          type: Boolean,
+          notify: true,
+          observer: 'osChanged'
+        },
+        yearOrders: {
+          type: Array,
+          notify: true
+        },
+        monthOrders: {
+          type: Array,
+          notify: true
+        },
+        weekOrders: {
+          type: Array,
+          notify: true
+        },
+        itemsSoldWeek: {
+          type: Number,
+          notify: true
+        },
+        itemsSoldMonth: {
+          type: Number,
+          notify: true
+        },
+        itemsSoldYear: {
+          type: Number,
+          notify: true
+        },
+        totalWeekSales: {
+          type: Number,
+          notify: true
+        },
+        totalMonthSales: {
+          type: Number,
+          notify: true
+        },
+        totalYearSales: {
+          type: Number,
+          notify: true
+        },
+        avgWeekSale: {
+          type: Number,
+          notify: true
+        },
+        avgMonthSale: {
+          type: Number,
+          notify: true
+        },
+        avgYearSale: {
+          type: Number,
+          notify: true
+        }
+        
+      },
+      listeners: {
+        'statsForm.iron-form-response': 'onStatsUpdate'
+      },
+      ready: function() {
+      },
+      onStatsUpdate: function(e) {
+        console.log("stats: ", e.detail.response);
+        if( e.detail && e.detail.response ){
+          var r = e.detail.response;
+          
+          this.totalOrders = r.total;
+          this.yearOrders = r.year;
+          this.monthOrders = r.month;
+          this.weekOrders = r.week;
+          
+          this.avgWeekSale = r.avgSaleWeek;
+          this.avgMonthSale = r.avgSaleMonth;
+          this.avgYearSale = r.avgSaleYear;
+          
+          this.itemsSoldWeek = r.numInWeek;
+          this.itemsSoldMonth = r.numInMonth;
+          this.itemsSoldYear = r.numInYear;
+          
+          this.totalWeekSales = r.weekSales;
+          this.totalMonthSales = r.monthSales;
+          this.totalYearSales = r.yearSales;
+        }
+      },
+      osChanged: function(e) {
+        this.$.statsForm.submit();
+      }
+    });
+      
+  </script>
+</dom-module>

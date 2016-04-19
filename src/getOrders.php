@@ -17,7 +17,7 @@ if( isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == True) {
   // pulling everyones orders sorted by time decending
   if( $_SESSION['user']['isStaff'] || $_SESSION['user']['isManager'] ) {
     
-    $sql = "SELECT * FROM (SELECT Orders.cid, Orders.pid, Orders.status, Orders.quantity, Orders.odate, Item.pname, Item.ptype, Item.psubtype, Item.cost, Item.discount, Customer.uname, Customer.email FROM Orders INNER JOIN Item ON Orders.pid=Item.pid INNER JOIN Customer ON Orders.cid=Customer.cid) AS t1 WHERE t1.status <> 'cart' ORDER BY t1.odate";
+    $sql = "SELECT * FROM (SELECT Orders.cid, Orders.pid, Orders.status, Orders.quantity, Orders.odate, Item.pname, Item.ptype, Item.psubtype, Item.cost, Item.discount, Customer.uname, Customer.email FROM Orders INNER JOIN Item ON Orders.pid=Item.pid INNER JOIN Customer ON Orders.cid=Customer.cid) AS t1 WHERE t1.status <> 'cart' ORDER BY t1.odate DESC";
     
     $res = $db->select($sql);
 
@@ -44,7 +44,7 @@ if( isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == True) {
   }
   // pulling one users orders based on login session
   else {
-    $sql = "SELECT * FROM (SELECT Orders.cid, Orders.pid, Orders.status, Orders.quantity, Orders.odate, Item.pname, Item.ptype, Item.psubtype, Item.cost, Item.discount FROM Orders INNER JOIN Item ON Orders.pid=Item.pid) AS t1 WHERE t1.cid=".($_SESSION['cid'])." AND t1.status <> 'cart' ORDER BY t1.odate";
+    $sql = "SELECT * FROM (SELECT Orders.cid, Orders.pid, Orders.status, Orders.quantity, Orders.odate, Item.pname, Item.ptype, Item.psubtype, Item.cost, Item.discount FROM Orders INNER JOIN Item ON Orders.pid=Item.pid) AS t1 WHERE t1.cid=".($_SESSION['cid'])." AND t1.status <> 'cart' ORDER BY t1.odate DESC";
     
     $res = $db->select($sql);
 

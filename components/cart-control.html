@@ -70,7 +70,7 @@
         </template>
       </div>
       
-      <div class="layout horizontal center-center" id="statusBar"></div>
+      <div class="layout horizontal center-center">{{statusMessage}}</div>
       
       <div class="buttons">
         <paper-button raised id="placeOrderButton" hidden$="{{zeroCart}}" on-tap="placeOrder">Place Order</paper-button>
@@ -102,6 +102,11 @@
         zeroCart: {
           type: Boolean,
           computed: 'isCartEmpty(cart)'
+        },
+        statusMessage: {
+          type: String,
+          notify: true,
+          value: ""
         }
       },
       listeners: {
@@ -150,13 +155,32 @@
           
           console.log("placeOrder response ", e.detail.response);
           
-          this.cart = e.detail.response.cart;
-          this.fire('cart-resize', {cartSize: e.detail.response.cartSize});
+          this.statusMessage = e.detail.response.message;
+         
+          var that = this;
+          this.async(function() {
+            that.statusMessage = "";
+            that.cart = e.detail.response.cart;
+            that.fire('cart-resize', {cartSize: e.detail.response.cartSize});
+          }, 1000);
+          
+          //this.fire('order-resize');
+          
+          
+          
+          //this.cart = e.detail.response.cart;
+          //this.fire('cart-resize', {cartSize: e.detail.response.cartSize});
+        } else {
+          console.log(e.detail.response);
         }
       },
       isCartEmpty: function(c) {
-        if(c)
-          return (c.length == 0);
+        if( c ){
+          if( c.length == 0 ) {
+            this.statusMessage = "";
+            return true;
+          }
+        }
         return false;
       }
     });

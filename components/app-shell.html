@@ -18,6 +18,7 @@
 <link rel="import" href="search-card.html">
 <link rel="import" href="login-card.html">
 <link rel="import" href="item-card.html">
+<link rel="import" href="stats-card.html">
 
 <dom-module id="app-shell">
   <template>
@@ -48,7 +49,7 @@
     </form>
     
     <template is="dom-if" if="{{loggedIn}}">
-      <cart-control cart="{{cartItems}}" visible="{{cartOpen}}" on-cart-resize="onCartResize"></cart-control>
+      <cart-control cart="{{cartItems}}" visible="{{cartOpen}}" on-cart-resize="onCartResize" on-order-resize="updateOrders"></cart-control>
     </template>
     
     <login-card id="login"></login-card>
@@ -95,6 +96,9 @@
               <template is="dom-if" if="{{loggedIn}}">
                 <paper-tab>ORDERS</paper-tab>
               </template>
+              <template is="dom-if" if="{{isManager}}">
+                <paper-tab>STATS</paper-tab>
+              </template>
           </paper-tabs>
           
         </paper-toolbar>
@@ -116,7 +120,13 @@
           
           <template id="ordTemplate" is="dom-if" if="{{loggedIn}}">
             <div>
-              <order-card></order-card>
+              <order-card stale-orders="{{needOrderUpdate}}"></order-card>
+            </div>
+          </template>
+          
+          <template is="dom-if" if="{{isManager}}">
+            <div>
+              <stats-card></stats-card>
             </div>
           </template>
           
@@ -164,10 +174,12 @@
         },
         isStaff: {
           type: Boolean,
+          notify: true,
           default: false
         },
         isManager: {
           type: Boolean,
+          notify: true,
           default: false
         },
         isAdmin: {
@@ -193,6 +205,11 @@
         loginLevel: {
           type: String,
           notify: true
+        },
+        needOrderUpdate: {
+          type: Boolean,
+          notify: true,
+          default: false
         }
       },
       listeners: {
@@ -315,6 +332,9 @@
             return (str.indexOf(item.ptype.toLowerCase()) != -1);
           };
         }
+      },
+      updateOrders: function(e) {
+        this.needOrderUpdate = true;
       }
     });
   </script>
