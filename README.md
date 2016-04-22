@@ -1,5 +1,5 @@
 # e-commerce
-Database design project for CS405G at the University of Kentucky
+Material Design database project for CS405G at the University of Kentucky
 
 ### Demo
 A live version of this site can be seen [here](http://ruffner.noip.me/e-commerce). 
