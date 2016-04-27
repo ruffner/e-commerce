@@ -66,18 +66,22 @@ CREATE TABLE Orders (
   CHECK (quantity > 0)
 ) ENGINE=INNODB;
 
-CREATE TRIGGER statusTrig AFTER UPDATE ON Orders
+DELIMITER //
+CREATE TRIGGER statusTrig BEFORE UPDATE ON Orders
 FOR EACH ROW
 BEGIN
 	IF NOT (NEW.status="cart" OR NEW.status="pending" OR NEW.status="shipped") THEN
 		SET NEW.status=OLD.status;
 	END IF;
 END;//
+DELIMITER;
 
-CREATE TRIGGER quantityTrig AFTER UPDATE ON Orders
+DELIMITER //
+CREATE TRIGGER quantityTrig BEFORE UPDATE ON Orders
 FOR EACH ROW
 BEGIN
 	IF n.quantity <0 THEN
 		SET n.quantity=0;
 	END IF;
 END;//
+DELIMITER;
