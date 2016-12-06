@@ -2,7 +2,7 @@
 Material Design database project for CS405G at the University of Kentucky
 
 ### Demo
-A live version of this site can be seen [here](http://ruffner.ddns.net/e-commerce) or [here](http://ruffdev.com/e-commerce). 
+A live version of this demo site can be seen [here](http://ruffdev.com/e-commerce). Photo cred to my dad.
 
 ### Usage
 This site is built on Google's [Web Components](https://elements.polymer-project.org/). 
