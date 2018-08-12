@@ -1,8 +1,8 @@
 # e-commerce
-Material Design database project for CS405G at the University of Kentucky
+E-Commerce is a simple, clean, mock store design done as a project for my databases course.
 
 ### Demo
-A live version of this demo site can be seen [here](http://ruffdev.com/e-commerce). Photo cred to my dad.
+A live version of this demo site can be seen [here](http://ruffner.ddns.net/e-commerce). Photo cred to my dad.
 
 ### Usage
 This site is built on Google's [Web Components](https://elements.polymer-project.org/). 
